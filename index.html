@@ -67,6 +67,7 @@ header {background-color: var(--bg-paper); border-bottom:1px solid #e0dcd3; padd
 .admin-section h3 {font-family: var(--font-heading); margin-bottom:0.5rem;}
 .admin-btn {padding:0.5rem 1rem; margin-right:0.5rem; border:none; cursor:pointer; background: var(--leather-brown); color:white; transition:0.3s;}
 .admin-btn:hover {background: var(--ink-dark);}
+.admin-panel-btn {display: none;}
 </style>
 </head>
 <body>
@@ -79,7 +80,7 @@ header {background-color: var(--bg-paper); border-bottom:1px solid #e0dcd3; padd
             <button onclick="filterProducts()">Search</button>
         </div>
         <div class="cart-trigger" onclick="showCart()">Cart <span class="cart-count" id="cartCount">0</span></div>
-        <div style="margin-left:10px;"><button class="admin-btn" onclick="adminLogin()">Admin Panel</button></div>
+        <div style="margin-left:10px;"><button class="admin-btn" id="adminPanelBtn" onclick="adminLogin()">Admin Panel</button></div>
     </div>
 </header>
 
@@ -153,7 +154,7 @@ function showAdmin(){document.getElementById("shop-view").style.display="none";d
 
 function adminLogin(){
     const pwd=prompt("Enter admin password:");
-    if(pwd==="canon_-!LB2107"){showAdmin(); showNotification("Admin access granted");}
+    if(pwd==="canon_-!LB2107"){document.getElementById("adminPanelBtn").style.display = "inline-block"; showAdmin(); showNotification("Admin access granted");}
     else{alert("Incorrect password");}
 }
 
