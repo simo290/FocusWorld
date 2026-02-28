@@ -3,308 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus.World | Classical Stationery & Books</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>Focus.World | Professional E-Commerce Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root {
-            --bg-paper: #FDFBF7;
-            --bg-secondary: #F2EFE9;
-            --ink-dark: #2C241B;
-            --leather-brown: #8B5E3C;
-            --gold-muted: #C5A059;
-            --success-green: #4A5D23;
-            --danger-muted: #8A3324;
-            --font-heading: 'Playfair Display', serif;
-            --font-body: 'Lato', sans-serif;
-            --font-decorative: 'Cinzel', serif;
+            --paper: #FDFBF7; --ink: #2C241B; --gold: #C5A059; --leather: #8B5E3C;
+            --success: #28a745; --danger: #dc3545;
         }
-        * {box-sizing:border-box;margin:0;padding:0;}
-        body {background-color: var(--bg-paper); color: var(--ink-dark); font-family: var(--font-body); line-height: 1.6;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; }
         
-        header {
-            background-color: var(--bg-paper); 
-            border-bottom:1px solid #e0dcd3; 
-            padding:1.5rem 2rem; 
-            position:sticky; 
-            top:0; 
-            z-index:100; 
-            display:flex; 
-            justify-content:space-between; 
-            align-items:center; 
-            box-shadow:0 2px 10px rgba(44,36,27,0.05);
-        }
+        /* Layout */
+        header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--leather); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-family: 'Cinzel', serif; font-size: 1.6rem; cursor: pointer; }
+        .nav-links button { background: none; border: 1px solid var(--ink); padding: 5px 15px; cursor: pointer; margin-left: 5px; font-weight: bold; }
         
-        .logo {font-family: var(--font-decorative); font-size:1.8rem; font-weight:700; color: var(--ink-dark); letter-spacing:2px; text-decoration:none; cursor: pointer;}
-        .nav-controls {display:flex; gap:1.5rem; align-items:center;}
-        
-        .search-bar {display:flex; border:1px solid var(--leather-brown); border-radius:2px; overflow:hidden;}
-        .search-bar input {border:none; padding:0.5rem 1rem; background:transparent; font-family: var(--font-body); color: var(--ink-dark); width:200px;}
-        .search-bar button {background: var(--leather-brown); color:white; border:none; padding:0 1rem; cursor:pointer;}
-        
-        .cart-trigger {position:relative; cursor:pointer; font-family: var(--font-heading); font-weight:700; display:flex; align-items:center; gap:5px;}
-        .cart-count {background: var(--leather-brown); color:white; font-size:0.75rem; padding:2px 6px; border-radius:50%;}
-        
-        .container {max-width:1200px; margin:0 auto; padding:2rem;}
-        .section-title {font-family: var(--font-heading); font-size:2.5rem; text-align:center; margin-bottom:2rem; color: var(--ink-dark); font-style:italic;}
-        
-        .controls-bar {display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid #e0dcd3;}
-        .filter-group select, .filter-group button {padding:0.5rem 1rem; border:1px solid var(--ink-dark); background:transparent; color: var(--ink-dark); font-family: var(--font-body); cursor:pointer; margin-right:0.5rem; transition:all 0.3s;}
-        .filter-group button:hover, .filter-group select:hover {background: var(--leather-brown); color:white; border-color: var(--leather-brown);}
-        
-        .product-grid {display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem;}
-        .product-card {background:white; border:1px solid #e0dcd3; padding:1rem; display:flex; flex-direction:column; transition:transform 0.3s, box-shadow 0.3s; position:relative;}
-        .product-card:hover {transform: translateY(-5px); box-shadow:0 10px 20px rgba(44,36,27,0.1);}
-        
-        .product-image-placeholder {background-color: var(--bg-secondary); height:250px; width:100%; display:flex; align-items:center; justify-content:center; color: var(--leather-brown); font-family: var(--font-heading); margin-bottom:1rem; border:1px solid #e0dcd3; font-size:3rem;}
-        .product-info {text-align:center; margin-bottom:1rem;}
-        .product-name {font-family: var(--font-heading); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;}
-        .product-price {color: var(--leather-brown); font-weight:700; font-size:1.1rem;}
-        
-        .product-actions {margin-top:auto; display:flex; flex-direction:column; gap:0.5rem;}
-        .btn {padding:0.8rem; border:none; cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.75rem; transition:0.3s;}
-        .btn-primary {background-color: var(--ink-dark); color:white;}
-        .btn-primary:hover {background-color: var(--leather-brown);}
-        .btn-secondary {background-color:transparent; border:1px solid var(--ink-dark); color: var(--ink-dark);}
-        
-        #cart-view, #admin-panel {display:none; background:white; padding:2rem; border:1px solid #e0dcd3;}
-        
-        /* Admin Styling */
-        #adminPanelBtn { display: none; } /* Hidden by default */
-        .admin-header {font-family: var(--font-heading); font-size:2rem; margin-bottom:1rem; border-bottom: 2px solid var(--leather-brown); padding-bottom: 0.5rem;}
-        .admin-section {margin-bottom:2rem; padding: 1rem; background: var(--bg-secondary);}
-        .admin-btn {padding:0.6rem 1.2rem; margin-right:0.5rem; border:none; cursor:pointer; background: var(--leather-brown); color:white; transition:0.3s; font-family: var(--font-body); font-weight: bold;}
-        .admin-btn:hover {background: var(--ink-dark);}
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 20px; }
+        .view { display: none; }
+        .active-view { display: block; }
 
-        #notification {position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background-color: var(--ink-dark); color:white; padding:1rem 2rem; border-radius:4px; opacity:0; transition:opacity 0.5s; z-index:1000; pointer-events:none;}
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: var(--ink); color: white; }
+
+        /* Forms */
+        .form-card { max-width: 500px; margin: auto; padding: 2rem; background: white; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-block { width: 100%; padding: 15px; background: var(--ink); color: white; border: none; cursor: pointer; font-size: 1rem; font-weight: bold; }
+        .btn-block:hover { background: var(--leather); }
+
+        /* Payment UI */
+        #payment-element { margin: 20px 0; padding: 15px; border: 1px solid #6772e5; border-radius: 4px; }
+        
+        /* Admin Badge */
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
+        .pending { background: #ffeeba; color: #856404; }
+        .paid { background: #d4edda; color: #155724; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo" onclick="showGrid()">Focus.World</div>
-    <div class="nav-controls">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search library...">
-            <button onclick="filterProducts()">Search</button>
-        </div>
-        <div class="cart-trigger" onclick="showCart()">Cart <span class="cart-count" id="cartCount">0</span></div>
-        <button class="admin-btn" id="adminPanelBtn" onclick="showAdmin()">Admin Panel</button>
-        <button class="btn-secondary" id="loginBtn" onclick="adminLogin()" style="padding: 5px 10px; font-size: 0.6rem;">Admin Login</button>
-    </div>
+    <div class="logo" onclick="navigateTo('shop')">Focus.World</div>
+    <div class="nav-links" id="header-nav"></div>
 </header>
 
 <div class="container">
-
-    <div id="shop-view">
-        <h1 class="section-title">The Collection</h1>
-        <div class="controls-bar">
-            <div class="filter-group">
-                <select id="categoryFilter" onchange="filterProducts()">
-                    <option value="all">All Categories</option>
-                    <option value="journal">Journals</option>
-                    <option value="pen">Writing Instruments</option>
-                    <option value="book">Books</option>
-                </select>
-                <select id="sortOrder" onchange="filterProducts()">
-                    <option value="featured">Featured</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                </select>
+    
+    <section id="view-auth" class="view">
+        <div class="form-card">
+            <h2 id="auth-title">Customer Login</h2>
+            <div id="register-only" style="display:none">
+                <input type="text" id="reg-name" placeholder="Full Name">
             </div>
-            <div>Showing <span id="productCount">0</span> items</div>
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <input type="password" id="auth-pass" placeholder="Password">
+            <button class="btn-block" onclick="processAuth()">Continue</button>
+            <p style="text-align:center; margin-top:15px; cursor:pointer; text-decoration:underline;" onclick="toggleAuth()">Switch Login/Register</p>
         </div>
-        <div class="product-grid" id="productGrid"></div>
-    </div>
+    </section>
 
-    <div id="cart-view">
-        <h1 class="section-title">Your Study Desk</h1>
-        <div id="cartItemsContainer"></div>
-        <div class="cart-summary">
-            <span class="total-price" style="font-size: 1.5rem; font-family: var(--font-heading);">Total: $<span id="cartTotal">0.00</span></span>
-            <button class="btn btn-primary" style="width:200px;" onclick="checkout()">Proceed to Checkout</button>
-            <button class="btn btn-secondary" style="width:200px;margin-top:10px;" onclick="showGrid()">Continue Shopping</button>
-        </div>
-    </div>
+    <section id="view-shop" class="view">
+        <h1 style="text-align:center; font-family:'Playfair Display'; margin-bottom:2rem;">The Masterpiece Collection</h1>
+        <div id="product-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:2rem;"></div>
+    </section>
 
-    <div id="admin-panel">
-        <div class="admin-header">Admin Control Center</div>
-        <div class="admin-section">
-            <h3>Inventory Management</h3>
-            <p style="margin-bottom: 1rem; font-size: 0.9rem;">Manage your classical stationery stock.</p>
-            <button class="admin-btn" onclick="alert('Add Product functionality')">Add New Product</button>
-            <button class="admin-btn" onclick="alert('Edit Product functionality')">Edit Product</button>
-            <button class="admin-btn" onclick="alert('Delete Product functionality')">Delete Product</button>
+    <section id="view-checkout" class="view">
+        <h2 style="margin-bottom:1rem">Secure Checkout</h2>
+        <div style="display:grid; grid-template-columns: 1fr 400px; gap:2rem;">
+            <div>
+                <div class="form-card" style="max-width:100%; margin:0;">
+                    <h3>Shipping Information</h3>
+                    <input type="text" id="ship-address" placeholder="Full Street Address">
+                    <input type="text" id="ship-city" placeholder="City">
+                    <div id="payment-element">
+                        <p style="color:#6772e5; font-weight:bold;">💳 Stripe / PayPal Secure Gateway</p>
+                        <input type="text" placeholder="Card Number: 4242 4242 4242 4242" style="border-color:#6772e5">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" placeholder="MM/YY">
+                            <input type="text" placeholder="CVC">
+                        </div>
+                    </div>
+                    <button class="btn-block" onclick="completePayment()" style="background:#6772e5">Pay Now & Confirm Order</button>
+                </div>
+            </div>
+            <div style="background:#eee; padding:20px;">
+                <h3>Order Summary</h3>
+                <div id="checkout-items"></div>
+                <hr style="margin:10px 0">
+                <h3>Total: $<span id="checkout-total">0.00</span></h3>
+            </div>
         </div>
-        <div class="admin-section">
-            <h3>Order History</h3>
-            <button class="admin-btn" onclick="alert('Viewing Orders...')">View All Orders</button>
+    </section>
+
+    <section id="view-admin" class="view">
+        <h1 style="border-bottom:3px solid var(--leather)">Curator Control Center</h1>
+        
+        <div style="display:grid; grid-template-columns: 300px 1fr; gap:2rem; margin-top:2rem;">
+            <aside>
+                <div class="form-card" style="width:100%; padding:15px;">
+                    <h3>Manage Product</h3>
+                    <input type="hidden" id="edit-id">
+                    <input type="text" id="p-name" placeholder="Product Name">
+                    <input type="number" id="p-price" placeholder="Price">
+                    <input type="text" id="p-img" placeholder="Image URL">
+                    <input type="number" id="p-stock" placeholder="Stock">
+                    <button class="btn-block" onclick="admin_saveProduct()">Save Product</button>
+                    <button class="btn-block" onclick="admin_clearForm()" style="background:#666; margin-top:5px;">Clear</button>
+                </div>
+            </aside>
+
+            <main>
+                <h3>Inventory Status</h3>
+                <table id="admin-inventory">
+                    <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+
+                <h3 style="margin-top:2rem">Global Sales (Orders)</h3>
+                <table id="admin-orders">
+                    <thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+
+                <h3 style="margin-top:2rem">Registered Customers</h3>
+                <table id="admin-users">
+                    <thead><tr><th>Name</th><th>Email</th><th>Join Date</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </main>
         </div>
-        <button class="btn-secondary" onclick="showGrid()">Exit Admin Mode</button>
-    </div>
+    </section>
 
 </div>
 
-<div id="notification">Item added to cart</div>
-
 <script>
-// --- Data ---
-const products = [
-    { id: 1, name: "Midnight Journal", category: "journal", price: 12 },
-    { id: 2, name: "Vintage Fountain Pen", category: "pen", price: 25 },
-    { id: 3, name: "Leather Notebook", category: "journal", price: 18 },
-    { id: 4, name: "Classic Literature Book", category: "book", price: 30 },
-    { id: 5, name: "Calligraphy Set", category: "pen", price: 40 },
-    { id: 6, name: "Antique Desk Lamp", category: "other", price: 50 }
-];
-let cart = [];
+    // --- DATABASE MOCKUP ---
+    let DB = {
+        products: JSON.parse(localStorage.getItem('fw_prods')) || [
+            {id: 1, name: "Victorian Inkwell", price: 120, img: "https://picsum.photos/400/300?1", stock: 15},
+            {id: 2, name: "Hand-Bound Ledger", price: 85, img: "https://picsum.photos/400/300?2", stock: 8}
+        ],
+        users: JSON.parse(localStorage.getItem('fw_users')) || [
+            {email: "admin@focus.com", pass: "admin123", name: "Head Curator", role: "admin"}
+        ],
+        orders: JSON.parse(localStorage.getItem('fw_orders')) || []
+    };
 
-// --- Navigation Functions ---
-function showGrid() {
-    document.getElementById("shop-view").style.display = "block";
-    document.getElementById("cart-view").style.display = "none";
-    document.getElementById("admin-panel").style.display = "none";
-}
+    let currentUser = JSON.parse(localStorage.getItem('fw_session')) || null;
+    let cart = [];
+    let isRegister = false;
 
-function showCart() {
-    document.getElementById("shop-view").style.display = "none";
-    document.getElementById("cart-view").style.display = "block";
-    document.getElementById("admin-panel").style.display = "none";
-    renderCart();
-}
-
-function showAdmin() {
-    document.getElementById("shop-view").style.display = "none";
-    document.getElementById("cart-view").style.display = "none";
-    document.getElementById("admin-panel").style.display = "block";
-}
-
-// --- Admin Logic ---
-function adminLogin() {
-    const pwd = prompt("Enter admin password:");
-    if (pwd === "canon_-!LB2107") {
-        // Show the persistent admin button and the panel
-        document.getElementById("adminPanelBtn").style.display = "inline-block";
-        document.getElementById("loginBtn").style.display = "none"; // Hide login button
-        showAdmin(); 
-        showNotification("Access Granted. Welcome back.");
-    } else {
-        alert("Access Denied. Incorrect password.");
+    function sync() {
+        localStorage.setItem('fw_prods', JSON.stringify(DB.products));
+        localStorage.setItem('fw_users', JSON.stringify(DB.users));
+        localStorage.setItem('fw_orders', JSON.stringify(DB.orders));
+        localStorage.setItem('fw_session', JSON.stringify(currentUser));
+        renderAll();
     }
-}
 
-// --- Shop Logic ---
-function filterProducts() {
-    const category = document.getElementById("categoryFilter").value;
-    const sortOrder = document.getElementById("sortOrder").value;
-    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-    
-    let filtered = products.filter(p => (category === "all" || p.category === category) && p.name.toLowerCase().includes(searchTerm));
-    
-    if (sortOrder === "price-low") filtered.sort((a, b) => a.price - b.price);
-    if (sortOrder === "price-high") filtered.sort((a, b) => b.price - a.price);
-    
-    renderProducts(filtered);
-}
-
-function renderProducts(productList) {
-    const container = document.getElementById("productGrid");
-    container.innerHTML = "";
-    document.getElementById("productCount").textContent = productList.length;
-    
-    productList.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-            <div class="product-image-placeholder">📖</div>
-            <div class="product-info">
-                <div class="product-name">${product.name}</div>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
-            </div>
-            <div class="product-actions">
-                <button class="btn btn-primary" onclick="addToCart(${product.id})">Add to Cart</button>
-                <button class="btn btn-secondary" onclick="viewDetails(${product.id})">View Details</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-// --- Cart Logic ---
-function addToCart(id) {
-    const product = products.find(p => p.id === id);
-    const cartItem = cart.find(c => c.id === id);
-    if (cartItem) cartItem.quantity++;
-    else cart.push({ ...product, quantity: 1 });
-    updateCartCount();
-    showNotification(`${product.name} added to cart`);
-}
-
-function updateCartCount() {
-    document.getElementById("cartCount").textContent = cart.reduce((acc, item) => acc + item.quantity, 0);
-}
-
-function renderCart() {
-    const container = document.getElementById("cartItemsContainer");
-    container.innerHTML = "";
-    if (cart.length === 0) {
-        container.innerHTML = "<p style='text-align:center; padding: 2rem;'>Your desk is empty. No items in cart.</p>";
-        document.getElementById("cartTotal").textContent = "0.00";
-        return;
+    // --- NAVIGATION ---
+    function navigateTo(view) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+        document.getElementById('view-' + view).classList.add('active-view');
+        renderAll();
     }
-    let total = 0;
-    cart.forEach(item => {
-        total += item.price * item.quantity;
-        const row = document.createElement("div");
-        row.style = "display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #e0dcd3;";
-        row.innerHTML = `
-            <div style="flex:2">
-                <div style="font-family:var(--font-heading); font-weight:700;">${item.name}</div>
-                <div style="color:var(--leather-brown);">$${item.price.toFixed(2)}</div>
+
+    function toggleAuth() {
+        isRegister = !isRegister;
+        document.getElementById('auth-title').innerText = isRegister ? 'Customer Registration' : 'Customer Login';
+        document.getElementById('register-only').style.display = isRegister ? 'block' : 'none';
+    }
+
+    // --- AUTH LOGIC ---
+    function processAuth() {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-pass').value;
+
+        if(isRegister) {
+            const name = document.getElementById('reg-name').value;
+            DB.users.push({name, email, pass, role: 'customer', joined: new Date().toLocaleDateString()});
+            alert("Account created! Please login.");
+            toggleAuth();
+        } else {
+            const user = DB.users.find(u => u.email === email && u.pass === pass);
+            if(user) {
+                currentUser = user;
+                sync();
+                navigateTo('shop');
+            } else {
+                alert("Invalid Credentials");
+            }
+        }
+    }
+
+    function logout() { currentUser = null; sync(); navigateTo('auth'); }
+
+    // --- SHOP & CHECKOUT ---
+    function addToCart(id) {
+        if(!currentUser) return navigateTo('auth');
+        const p = DB.products.find(x => x.id === id);
+        if(p.stock <= 0) return alert("Out of Stock");
+        cart.push(p);
+        navigateTo('checkout');
+    }
+
+    function completePayment() {
+        // Here we simulate the Stripe "Charge Success"
+        const total = cart.reduce((a, b) => a + b.price, 0);
+        const order = {
+            id: "ORD-" + Math.floor(Math.random()*100000),
+            customer: currentUser.email,
+            total: total,
+            items: cart.map(i => i.name),
+            status: "Paid",
+            date: new Date().toLocaleString()
+        };
+
+        // Update Stock
+        cart.forEach(item => {
+            const p = DB.products.find(x => x.id === item.id);
+            if(p) p.stock--;
+        });
+
+        DB.orders.unshift(order);
+        cart = [];
+        sync();
+        alert("Payment Successful! Your order " + order.id + " is being prepared.");
+        navigateTo('shop');
+    }
+
+    // --- ADMIN CRUD ---
+    function admin_saveProduct() {
+        const id = document.getElementById('edit-id').value;
+        const name = document.getElementById('p-name').value;
+        const price = Number(document.getElementById('p-price').value);
+        const img = document.getElementById('p-img').value;
+        const stock = Number(document.getElementById('p-stock').value);
+
+        if(id) {
+            const idx = DB.products.findIndex(p => p.id == id);
+            DB.products[idx] = {id, name, price, img, stock};
+        } else {
+            DB.products.push({id: Date.now(), name, price, img, stock});
+        }
+        admin_clearForm();
+        sync();
+    }
+
+    function admin_edit(id) {
+        const p = DB.products.find(x => x.id == id);
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('p-name').value = p.name;
+        document.getElementById('p-price').value = p.price;
+        document.getElementById('p-img').value = p.img;
+        document.getElementById('p-stock').value = p.stock;
+    }
+
+    function admin_delete(id) {
+        DB.products = DB.products.filter(p => p.id != id);
+        sync();
+    }
+
+    function updateOrderStatus(id) {
+        const order = DB.orders.find(o => o.id === id);
+        order.status = order.status === "Paid" ? "Shipped" : "Delivered";
+        sync();
+    }
+
+    function admin_clearForm() {
+        document.getElementById('edit-id').value = "";
+        document.querySelectorAll('#view-admin input').forEach(i => i.value = "");
+    }
+
+    // --- RENDER ENGINE ---
+    function renderAll() {
+        // Nav Update
+        const nav = document.getElementById('header-nav');
+        if(!currentUser) {
+            nav.innerHTML = `<button onclick="navigateTo('auth')">Login</button>`;
+        } else {
+            nav.innerHTML = `
+                <span>Welcome, ${currentUser.name}</span>
+                <button onclick="navigateTo('shop')">Shop</button>
+                ${currentUser.role === 'admin' ? `<button onclick="navigateTo('admin')" style="background:var(--leather); color:white">Curator Panel</button>` : ''}
+                <button onclick="logout()">Logout</button>
+            `;
+        }
+
+        // Shop Render
+        const shop = document.getElementById('product-list');
+        shop.innerHTML = DB.products.map(p => `
+            <div style="background:white; padding:15px; border:1px solid #ddd; text-align:center">
+                <img src="${p.img}" style="width:100%; height:200px; object-fit:cover">
+                <h3 style="margin:10px 0">${p.name}</h3>
+                <p style="color:var(--leather); font-weight:bold">$${p.price}</p>
+                <p><small>Stock: ${p.stock}</small></p>
+                <button class="btn-block" style="margin-top:10px" onclick="addToCart(${p.id})">Buy Now</button>
             </div>
-            <div style="display:flex; align-items:center; gap:1rem;">
-                <button style="width:25px; cursor:pointer;" onclick="changeQuantity(${item.id},-1)">-</button>
-                <span>${item.quantity}</span>
-                <button style="width:25px; cursor:pointer;" onclick="changeQuantity(${item.id},1)">+</button>
-                <button style="color:red; background:none; border:none; cursor:pointer; text-decoration:underline;" onclick="removeFromCart(${item.id})">Remove</button>
-            </div>
-        `;
-        container.appendChild(row);
-    });
-    document.getElementById("cartTotal").textContent = total.toFixed(2);
-}
+        `).join('');
 
-function changeQuantity(id, delta) {
-    const item = cart.find(c => c.id === id);
-    if (!item) return;
-    item.quantity += delta;
-    if (item.quantity <= 0) removeFromCart(id);
-    renderCart();
-    updateCartCount();
-}
+        // Checkout Render
+        document.getElementById('checkout-items').innerHTML = cart.map(i => `<p>${i.name} - $${i.price}</p>`).join('');
+        document.getElementById('checkout-total').innerText = cart.reduce((a, b) => a + b.price, 0).toFixed(2);
 
-function removeFromCart(id) {
-    cart = cart.filter(c => c.id !== id);
-    renderCart();
-    updateCartCount();
-}
+        // Admin Inventory
+        const inv = document.querySelector('#admin-inventory tbody');
+        inv.innerHTML = DB.products.map(p => `
+            <tr>
+                <td><img src="${p.img}" width="40"></td>
+                <td>${p.name}</td>
+                <td>$${p.price}</td>
+                <td>${p.stock}</td>
+                <td>
+                    <button onclick="admin_edit(${p.id})">Edit</button>
+                    <button onclick="admin_delete(${p.id})" style="color:red">Del</button>
+                </td>
+            </tr>
+        `).join('');
 
-function checkout() { alert("Checkout functionality not implemented yet."); }
+        // Admin Orders
+        const ords = document.querySelector('#admin-orders tbody');
+        ords.innerHTML = DB.orders.map(o => `
+            <tr>
+                <td>${o.id}</td>
+                <td>${o.customer}</td>
+                <td>$${o.total}</td>
+                <td><span class="status-badge ${o.status.toLowerCase()}">${o.status}</span></td>
+                <td><button onclick="updateOrderStatus('${o.id}')">Next Stage</button></td>
+            </tr>
+        `).join('');
 
-function showNotification(message) {
-    const toast = document.getElementById("notification");
-    toast.textContent = message;
-    toast.style.opacity = 1;
-    setTimeout(() => { toast.style.opacity = 0; }, 2000);
-}
+        // Admin Users
+        const usrs = document.querySelector('#admin-users tbody');
+        usrs.innerHTML = DB.users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.joined || 'N/A'}</td></tr>`).join('');
+    }
 
-function viewDetails(id) {
-    const product = products.find(p => p.id === id);
-    alert(`${product.name}\nPrice: $${product.price.toFixed(2)}\nCategory: ${product.category}\n\nA fine addition to your collection.`);
-}
-
-// Initial render
-renderProducts(products);
-updateCartCount();
+    // Initial Start
+    navigateTo('shop');
 </script>
 
 </body>
