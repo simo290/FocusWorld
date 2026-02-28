@@ -1,86 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Focus.World | Classical Stationery & Books</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-:root {
-    --bg-paper: #FDFBF7;
-    --bg-secondary: #F2EFE9;
-    --ink-dark: #2C241B;
-    --leather-brown: #8B5E3C;
-    --gold-muted: #C5A059;
-    --success-green: #4A5D23;
-    --danger-muted: #8A3324;
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Lato', sans-serif;
-    --font-decorative: 'Cinzel', serif;
-}
-* {box-sizing:border-box;margin:0;padding:0;}
-body {background-color: var(--bg-paper); color: var(--ink-dark); font-family: var(--font-body); line-height: 1.6;}
-header {background-color: var(--bg-paper); border-bottom:1px solid #e0dcd3; padding:1.5rem 2rem; position:sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 10px rgba(44,36,27,0.05);}
-.logo {font-family: var(--font-decorative); font-size:1.8rem; font-weight:700; color: var(--ink-dark); letter-spacing:2px; text-decoration:none;}
-.nav-controls {display:flex; gap:1.5rem; align-items:center;}
-.search-bar {display:flex; border:1px solid var(--leather-brown); border-radius:2px; overflow:hidden;}
-.search-bar input {border:none; padding:0.5rem 1rem; background:transparent; font-family: var(--font-body); color: var(--ink-dark); width:200px;}
-.search-bar button {background: var(--leather-brown); color:white; border:none; padding:0 1rem; cursor:pointer;}
-.cart-trigger {position:relative; cursor:pointer; font-family: var(--font-heading); font-weight:700; display:flex; align-items:center; gap:5px;}
-.cart-count {background: var(--leather-brown); color:white; font-size:0.75rem; padding:2px 6px; border-radius:50%;}
-.container {max-width:1200px; margin:0 auto; padding:2rem;}
-.section-title {font-family: var(--font-heading); font-size:2.5rem; text-align:center; margin-bottom:2rem; color: var(--ink-dark); font-style:italic;}
-.controls-bar {display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid #e0dcd3;}
-.filter-group select, .filter-group button {padding:0.5rem 1rem; border:1px solid var(--ink-dark); background:transparent; color: var(--ink-dark); font-family: var(--font-body); cursor:pointer; margin-right:0.5rem; transition:all 0.3s;}
-.filter-group button:hover, .filter-group select:hover {background: var(--leather-brown); color:white; border-color: var(--leather-brown);}
-.product-grid {display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem;}
-.product-card {background:white; border:1px solid #e0dcd3; padding:1rem; display:flex; flex-direction:column; transition:transform 0.3s, box-shadow 0.3s; position:relative;}
-.product-card:hover {transform: translateY(-5px); box-shadow:0 10px 20px rgba(44,36,27,0.1);}
-.product-image-placeholder {background-color: var(--bg-secondary); height:250px; width:100%; display:flex; align-items:center; justify-content:center; color: var(--leather-brown); font-family: var(--font-heading); margin-bottom:1rem; border:1px solid #e0dcd3; font-size:3rem;}
-.product-info {text-align:center; margin-bottom:1rem;}
-.product-name {font-family: var(--font-heading); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;}
-.product-price {color: var(--leather-brown); font-weight:700; font-size:1.1rem;}
-.product-actions {margin-top:auto; display:flex; flex-direction:column; gap:0.5rem;}
-.btn {padding:0.8rem; border:none; cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.75rem; transition:0.3s;}
-.btn-primary {background-color: var(--ink-dark); color:white;}
-.btn-primary:hover {background-color: var(--leather-brown);}
-.btn-secondary {background-color:transparent; border:1px solid var(--ink-dark); color: var(--ink-dark);}
-.btn-secondary:hover {background-color: var(--bg-secondary);}
-.btn-icon {position:absolute; top:1rem; right:1rem; background:transparent; border:none; font-size:1.5rem; color: var(--leather-brown); cursor:pointer; opacity:0.6; transition:0.3s;}
-.btn-icon:hover {opacity:1; transform:scale(1.1);}
-#cart-view {display:none; background:white; padding:2rem; border:1px solid #e0dcd3;}
-.cart-items {margin-bottom:2rem;}
-.cart-item {display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #e0dcd3;}
-.cart-item-details {flex:2;}
-.cart-item-name {font-family: var(--font-heading); font-size:1.2rem; font-weight:700;}
-.cart-item-price {color: var(--leather-brown);}
-.cart-controls {display:flex; align-items:center; gap:1rem;}
-.qty-btn {background: var(--bg-secondary); border:1px solid var(--ink-dark); width:30px; height:30px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:bold;}
-.qty-btn:hover {background: var(--leather-brown); color:white;}
-.remove-btn {color: var(--danger-muted); background:none; border:none; text-decoration:underline; cursor:pointer; font-size:0.9rem;}
-.cart-summary {margin-top:2rem; text-align:right;}
-.total-price {font-family: var(--font-heading); font-size:1.5rem; margin-bottom:1rem; display:block;}
-#notification {position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background-color: var(--ink-dark); color:white; padding:1rem 2rem; border-radius:4px; opacity:0; transition:opacity 0.5s; z-index:1000; pointer-events:none;}
-#admin-panel {display: none; background:var(--bg-secondary); padding:2rem;}
-.admin-header {font-family: var(--font-heading); font-size:2rem; margin-bottom:1rem;}
-.admin-section {margin-bottom:2rem;}
-.admin-section h3 {font-family: var(--font-heading); margin-bottom:0.5rem;}
-.admin-btn {padding:0.5rem 1rem; margin-right:0.5rem; border:none; cursor:pointer; background: var(--leather-brown); color:white; transition:0.3s;}
-.admin-btn:hover {background: var(--ink-dark);}
-.admin-panel-btn {display: none;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus.World | Classical Stationery & Books</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-paper: #FDFBF7;
+            --bg-secondary: #F2EFE9;
+            --ink-dark: #2C241B;
+            --leather-brown: #8B5E3C;
+            --gold-muted: #C5A059;
+            --success-green: #4A5D23;
+            --danger-muted: #8A3324;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lato', sans-serif;
+            --font-decorative: 'Cinzel', serif;
+        }
+        * {box-sizing:border-box;margin:0;padding:0;}
+        body {background-color: var(--bg-paper); color: var(--ink-dark); font-family: var(--font-body); line-height: 1.6;}
+        
+        header {
+            background-color: var(--bg-paper); 
+            border-bottom:1px solid #e0dcd3; 
+            padding:1.5rem 2rem; 
+            position:sticky; 
+            top:0; 
+            z-index:100; 
+            display:flex; 
+            justify-content:space-between; 
+            align-items:center; 
+            box-shadow:0 2px 10px rgba(44,36,27,0.05);
+        }
+        
+        .logo {font-family: var(--font-decorative); font-size:1.8rem; font-weight:700; color: var(--ink-dark); letter-spacing:2px; text-decoration:none; cursor: pointer;}
+        .nav-controls {display:flex; gap:1.5rem; align-items:center;}
+        
+        .search-bar {display:flex; border:1px solid var(--leather-brown); border-radius:2px; overflow:hidden;}
+        .search-bar input {border:none; padding:0.5rem 1rem; background:transparent; font-family: var(--font-body); color: var(--ink-dark); width:200px;}
+        .search-bar button {background: var(--leather-brown); color:white; border:none; padding:0 1rem; cursor:pointer;}
+        
+        .cart-trigger {position:relative; cursor:pointer; font-family: var(--font-heading); font-weight:700; display:flex; align-items:center; gap:5px;}
+        .cart-count {background: var(--leather-brown); color:white; font-size:0.75rem; padding:2px 6px; border-radius:50%;}
+        
+        .container {max-width:1200px; margin:0 auto; padding:2rem;}
+        .section-title {font-family: var(--font-heading); font-size:2.5rem; text-align:center; margin-bottom:2rem; color: var(--ink-dark); font-style:italic;}
+        
+        .controls-bar {display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid #e0dcd3;}
+        .filter-group select, .filter-group button {padding:0.5rem 1rem; border:1px solid var(--ink-dark); background:transparent; color: var(--ink-dark); font-family: var(--font-body); cursor:pointer; margin-right:0.5rem; transition:all 0.3s;}
+        .filter-group button:hover, .filter-group select:hover {background: var(--leather-brown); color:white; border-color: var(--leather-brown);}
+        
+        .product-grid {display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem;}
+        .product-card {background:white; border:1px solid #e0dcd3; padding:1rem; display:flex; flex-direction:column; transition:transform 0.3s, box-shadow 0.3s; position:relative;}
+        .product-card:hover {transform: translateY(-5px); box-shadow:0 10px 20px rgba(44,36,27,0.1);}
+        
+        .product-image-placeholder {background-color: var(--bg-secondary); height:250px; width:100%; display:flex; align-items:center; justify-content:center; color: var(--leather-brown); font-family: var(--font-heading); margin-bottom:1rem; border:1px solid #e0dcd3; font-size:3rem;}
+        .product-info {text-align:center; margin-bottom:1rem;}
+        .product-name {font-family: var(--font-heading); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;}
+        .product-price {color: var(--leather-brown); font-weight:700; font-size:1.1rem;}
+        
+        .product-actions {margin-top:auto; display:flex; flex-direction:column; gap:0.5rem;}
+        .btn {padding:0.8rem; border:none; cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.75rem; transition:0.3s;}
+        .btn-primary {background-color: var(--ink-dark); color:white;}
+        .btn-primary:hover {background-color: var(--leather-brown);}
+        .btn-secondary {background-color:transparent; border:1px solid var(--ink-dark); color: var(--ink-dark);}
+        
+        #cart-view, #admin-panel {display:none; background:white; padding:2rem; border:1px solid #e0dcd3;}
+        
+        /* Admin Styling */
+        #adminPanelBtn { display: none; } /* Hidden by default */
+        .admin-header {font-family: var(--font-heading); font-size:2rem; margin-bottom:1rem; border-bottom: 2px solid var(--leather-brown); padding-bottom: 0.5rem;}
+        .admin-section {margin-bottom:2rem; padding: 1rem; background: var(--bg-secondary);}
+        .admin-btn {padding:0.6rem 1.2rem; margin-right:0.5rem; border:none; cursor:pointer; background: var(--leather-brown); color:white; transition:0.3s; font-family: var(--font-body); font-weight: bold;}
+        .admin-btn:hover {background: var(--ink-dark);}
+
+        #notification {position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background-color: var(--ink-dark); color:white; padding:1rem 2rem; border-radius:4px; opacity:0; transition:opacity 0.5s; z-index:1000; pointer-events:none;}
+    </style>
 </head>
 <body>
 
 <header>
-    <a href="#" class="logo" onclick="showGrid()">Focus.World</a>
+    <div class="logo" onclick="showGrid()">Focus.World</div>
     <div class="nav-controls">
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search library...">
             <button onclick="filterProducts()">Search</button>
         </div>
         <div class="cart-trigger" onclick="showCart()">Cart <span class="cart-count" id="cartCount">0</span></div>
-        <div style="margin-left:10px;"><button class="admin-btn" id="adminPanelBtn" onclick="adminLogin()">Admin Panel</button></div>
+        <button class="admin-btn" id="adminPanelBtn" onclick="showAdmin()">Admin Panel</button>
+        <button class="btn-secondary" id="loginBtn" onclick="adminLogin()" style="padding: 5px 10px; font-size: 0.6rem;">Admin Login</button>
     </div>
 </header>
 
@@ -109,26 +118,28 @@ header {background-color: var(--bg-paper); border-bottom:1px solid #e0dcd3; padd
 
     <div id="cart-view">
         <h1 class="section-title">Your Study Desk</h1>
-        <div class="cart-items" id="cartItemsContainer"></div>
+        <div id="cartItemsContainer"></div>
         <div class="cart-summary">
-            <span class="total-price">Total: $<span id="cartTotal">0.00</span></span>
+            <span class="total-price" style="font-size: 1.5rem; font-family: var(--font-heading);">Total: $<span id="cartTotal">0.00</span></span>
             <button class="btn btn-primary" style="width:200px;" onclick="checkout()">Proceed to Checkout</button>
             <button class="btn btn-secondary" style="width:200px;margin-top:10px;" onclick="showGrid()">Continue Shopping</button>
         </div>
     </div>
 
     <div id="admin-panel">
-        <div class="admin-header">Admin Panel</div>
+        <div class="admin-header">Admin Control Center</div>
         <div class="admin-section">
-            <h3>Products</h3>
-            <button class="admin-btn" onclick="alert('Add Product')">Add New Product</button>
-            <button class="admin-btn" onclick="alert('Edit Product')">Edit Product</button>
-            <button class="admin-btn" onclick="alert('Delete Product')">Delete Product</button>
+            <h3>Inventory Management</h3>
+            <p style="margin-bottom: 1rem; font-size: 0.9rem;">Manage your classical stationery stock.</p>
+            <button class="admin-btn" onclick="alert('Add Product functionality')">Add New Product</button>
+            <button class="admin-btn" onclick="alert('Edit Product functionality')">Edit Product</button>
+            <button class="admin-btn" onclick="alert('Delete Product functionality')">Delete Product</button>
         </div>
         <div class="admin-section">
-            <h3>Orders</h3>
-            <button class="admin-btn" onclick="alert('View Orders')">View Orders</button>
+            <h3>Order History</h3>
+            <button class="admin-btn" onclick="alert('Viewing Orders...')">View All Orders</button>
         </div>
+        <button class="btn-secondary" onclick="showGrid()">Exit Admin Mode</button>
     </div>
 
 </div>
@@ -147,35 +158,63 @@ const products = [
 ];
 let cart = [];
 
-// --- Functions ---
-function showGrid(){document.getElementById("shop-view").style.display="block";document.getElementById("cart-view").style.display="none";document.getElementById("admin-panel").style.display="none";}
-function showCart(){document.getElementById("shop-view").style.display="none";document.getElementById("cart-view").style.display="block";document.getElementById("admin-panel").style.display="none";renderCart();}
-function showAdmin(){document.getElementById("shop-view").style.display="none";document.getElementById("cart-view").style.display="none";document.getElementById("admin-panel").style.display="block";}
-
-function adminLogin(){
-    const pwd=prompt("Enter admin password:");
-    if(pwd==="canon_-!LB2107"){document.getElementById("adminPanelBtn").style.display = "inline-block"; showAdmin(); showNotification("Admin access granted");}
-    else{alert("Incorrect password");}
+// --- Navigation Functions ---
+function showGrid() {
+    document.getElementById("shop-view").style.display = "block";
+    document.getElementById("cart-view").style.display = "none";
+    document.getElementById("admin-panel").style.display = "none";
 }
 
-function filterProducts(){
-    const category=document.getElementById("categoryFilter").value;
-    const sortOrder=document.getElementById("sortOrder").value;
-    const searchTerm=document.getElementById("searchInput").value.toLowerCase();
-    let filtered=products.filter(p=>(category==="all"||p.category===category)&&p.name.toLowerCase().includes(searchTerm));
-    if(sortOrder==="price-low") filtered.sort((a,b)=>a.price-b.price);
-    if(sortOrder==="price-high") filtered.sort((a,b)=>b.price-a.price);
+function showCart() {
+    document.getElementById("shop-view").style.display = "none";
+    document.getElementById("cart-view").style.display = "block";
+    document.getElementById("admin-panel").style.display = "none";
+    renderCart();
+}
+
+function showAdmin() {
+    document.getElementById("shop-view").style.display = "none";
+    document.getElementById("cart-view").style.display = "none";
+    document.getElementById("admin-panel").style.display = "block";
+}
+
+// --- Admin Logic ---
+function adminLogin() {
+    const pwd = prompt("Enter admin password:");
+    if (pwd === "canon_-!LB2107") {
+        // Show the persistent admin button and the panel
+        document.getElementById("adminPanelBtn").style.display = "inline-block";
+        document.getElementById("loginBtn").style.display = "none"; // Hide login button
+        showAdmin(); 
+        showNotification("Access Granted. Welcome back.");
+    } else {
+        alert("Access Denied. Incorrect password.");
+    }
+}
+
+// --- Shop Logic ---
+function filterProducts() {
+    const category = document.getElementById("categoryFilter").value;
+    const sortOrder = document.getElementById("sortOrder").value;
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    
+    let filtered = products.filter(p => (category === "all" || p.category === category) && p.name.toLowerCase().includes(searchTerm));
+    
+    if (sortOrder === "price-low") filtered.sort((a, b) => a.price - b.price);
+    if (sortOrder === "price-high") filtered.sort((a, b) => b.price - a.price);
+    
     renderProducts(filtered);
 }
 
-function renderProducts(productList){
-    const container=document.getElementById("productGrid");
-    container.innerHTML="";
-    document.getElementById("productCount").textContent=productList.length;
-    productList.forEach(product=>{
-        const card=document.createElement("div");
-        card.className="product-card";
-        card.innerHTML=`
+function renderProducts(productList) {
+    const container = document.getElementById("productGrid");
+    container.innerHTML = "";
+    document.getElementById("productCount").textContent = productList.length;
+    
+    productList.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
             <div class="product-image-placeholder">📖</div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
@@ -190,14 +229,78 @@ function renderProducts(productList){
     });
 }
 
-function addToCart(id){const product=products.find(p=>p.id===id);const cartItem=cart.find(c=>c.id===id);if(cartItem) cartItem.quantity++; else cart.push({...product,quantity:1});updateCartCount();showNotification(`${product.name} added to cart`);}
-function updateCartCount(){document.getElementById("cartCount").textContent=cart.reduce((acc,item)=>acc+item.quantity,0);}
-function renderCart(){const container=document.getElementById("cartItemsContainer");container.innerHTML="";if(cart.length===0){container.innerHTML="<p>Your cart is empty.</p>";document.getElementById("cartTotal").textContent="0.00";return;}let total=0;cart.forEach(item=>{total+=item.price*item.quantity;const row=document.createElement("div");row.className="cart-item";row.innerHTML=`<div class="cart-item-details"><div class="cart-item-name">${item.name}</div><div class="cart-item-price">$${item.price.toFixed(2)}</div></div><div class="cart-controls"><button class="qty-btn" onclick="changeQuantity(${item.id},-1)">-</button><span>${item.quantity}</span><button class="qty-btn" onclick="changeQuantity(${item.id},1)">+</button><button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button></div>`;container.appendChild(row);});document.getElementById("cartTotal").textContent=total.toFixed(2);}
-function changeQuantity(id,delta){const item=cart.find(c=>c.id===id);if(!item) return;item.quantity+=delta;if(item.quantity<=0) removeFromCart(id);renderCart();updateCartCount();}
-function removeFromCart(id){cart=cart.filter(c=>c.id!==id);renderCart();updateCartCount();}
-function checkout(){alert("Checkout functionality not implemented yet.");}
-function showNotification(message){const toast=document.getElementById("notification");toast.textContent=message;toast.style.opacity=1;setTimeout(()=>{toast.style.opacity=0;},2000);}
-function viewDetails(id){const product=products.find(p=>p.id===id);alert(`${product.name}\nPrice: $${product.price.toFixed(2)}\nCategory: ${product.category}`);}
+// --- Cart Logic ---
+function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const cartItem = cart.find(c => c.id === id);
+    if (cartItem) cartItem.quantity++;
+    else cart.push({ ...product, quantity: 1 });
+    updateCartCount();
+    showNotification(`${product.name} added to cart`);
+}
+
+function updateCartCount() {
+    document.getElementById("cartCount").textContent = cart.reduce((acc, item) => acc + item.quantity, 0);
+}
+
+function renderCart() {
+    const container = document.getElementById("cartItemsContainer");
+    container.innerHTML = "";
+    if (cart.length === 0) {
+        container.innerHTML = "<p style='text-align:center; padding: 2rem;'>Your desk is empty. No items in cart.</p>";
+        document.getElementById("cartTotal").textContent = "0.00";
+        return;
+    }
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+        const row = document.createElement("div");
+        row.style = "display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #e0dcd3;";
+        row.innerHTML = `
+            <div style="flex:2">
+                <div style="font-family:var(--font-heading); font-weight:700;">${item.name}</div>
+                <div style="color:var(--leather-brown);">$${item.price.toFixed(2)}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <button style="width:25px; cursor:pointer;" onclick="changeQuantity(${item.id},-1)">-</button>
+                <span>${item.quantity}</span>
+                <button style="width:25px; cursor:pointer;" onclick="changeQuantity(${item.id},1)">+</button>
+                <button style="color:red; background:none; border:none; cursor:pointer; text-decoration:underline;" onclick="removeFromCart(${item.id})">Remove</button>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+    document.getElementById("cartTotal").textContent = total.toFixed(2);
+}
+
+function changeQuantity(id, delta) {
+    const item = cart.find(c => c.id === id);
+    if (!item) return;
+    item.quantity += delta;
+    if (item.quantity <= 0) removeFromCart(id);
+    renderCart();
+    updateCartCount();
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(c => c.id !== id);
+    renderCart();
+    updateCartCount();
+}
+
+function checkout() { alert("Checkout functionality not implemented yet."); }
+
+function showNotification(message) {
+    const toast = document.getElementById("notification");
+    toast.textContent = message;
+    toast.style.opacity = 1;
+    setTimeout(() => { toast.style.opacity = 0; }, 2000);
+}
+
+function viewDetails(id) {
+    const product = products.find(p => p.id === id);
+    alert(`${product.name}\nPrice: $${product.price.toFixed(2)}\nCategory: ${product.category}\n\nA fine addition to your collection.`);
+}
 
 // Initial render
 renderProducts(products);
