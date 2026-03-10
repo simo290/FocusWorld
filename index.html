@@ -10,27 +10,23 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; }
         header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--leather); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-family: 'Cinzel', serif; font-size: 1.6rem; cursor: pointer; user-select: none; }
+        .logo { font-family: 'Cinzel', serif; font-size: 1.6rem; cursor: pointer; user-select: none; -webkit-user-select: none; }
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 20px; }
         .view { display: none; }
-        .active-view { display: block; }
+        .active-view { display: block !important; }
 
-        /* Secret Transparent Admin */
-        #view-admin { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); border: 2px dashed var(--leather); padding: 30px; border-radius: 20px; }
-        
+        /* Admin Styles */
+        #view-admin { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 2px dashed var(--leather); padding: 30px; border-radius: 20px; margin-top: 20px; }
         .prod-card { background: white; padding: 15px; border: 1px solid #ddd; display: flex; flex-direction: column; transition: 0.3s; }
-        .prod-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .btn-buy { width: 100%; padding: 12px; background: var(--ink); color: white; border: none; cursor: pointer; font-weight: bold; text-decoration: none; text-align: center; display: block; }
-        .btn-buy:hover { background: var(--leather); }
-        
+        .btn-buy { width: 100%; padding: 12px; background: var(--ink); color: white; border: none; cursor: pointer; font-weight: bold; text-decoration: none; text-align: center; display: block; margin-top: 10px; }
         input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        #json-output { background: #1a1a1a; color: #00ff00; padding: 15px; width: 100%; height: 150px; font-family: monospace; border: none; }
+        #json-output { background: #1a1a1a; color: #00ff00; padding: 15px; width: 100%; height: 150px; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo" onclick="secretAccess()">Focus.World</div>
+    <div class="logo" id="admin-trigger">Focus.World</div>
 </header>
 
 <div class="container">
@@ -40,7 +36,7 @@
     </section>
 
     <section id="view-admin" class="view">
-        <h1 style="font-family:'Cinzel'">Affiliate Link Manager (Secret)</h1>
+        <h1 style="font-family:'Cinzel'">Admin Panel (Secret)</h1>
         <div style="display:grid; grid-template-columns: 350px 1fr; gap:2rem; margin-top:2rem;">
             <aside>
                 <div style="background:white; padding:20px; border:1px solid #ddd;">
@@ -48,15 +44,14 @@
                     <input type="text" id="p-name" placeholder="Product Name">
                     <input type="number" id="p-price" placeholder="Price ($)">
                     <input type="text" id="p-img" placeholder="Image URL">
-                    <input type="text" id="p-link" placeholder="Affiliate Link (Amazon/Jumia)">
-                    <textarea id="p-desc" placeholder="Brief Description" rows="3"></textarea>
+                    <input type="text" id="p-link" placeholder="Affiliate Link">
+                    <textarea id="p-desc" placeholder="Description" rows="3"></textarea>
                     <button class="btn-buy" onclick="admin_addProduct()">Generate JSON</button>
-                    <button class="btn-buy" onclick="location.reload()" style="background:#666; margin-top:10px;">Exit Admin</button>
+                    <button class="btn-buy" onclick="window.location.reload()" style="background:#666;">Exit Admin</button>
                 </div>
             </aside>
             <main>
-                <h3>JSON Code (Copy to affiliate.json)</h3>
-                <textarea id="json-output" readonly></textarea>
+                <textarea id="json-output" readonly placeholder="JSON Output..."></textarea>
                 <div id="admin-list" style="margin-top:20px"></div>
             </main>
         </div>
@@ -66,19 +61,26 @@
 <script>
     let products = JSON.parse(localStorage.getItem('fw_prods')) || [];
     let clickCount = 0;
+    let clickTimer;
     const ADMIN_PASS = "canon_-!LB2107"; 
 
-    function secretAccess() {
+    // إصلاح مشكل الكليكات
+    document.getElementById('admin-trigger').addEventListener('click', function() {
         clickCount++;
-        setTimeout(() => { clickCount = 0; }, 2000);
+        clearTimeout(clickTimer);
+        
+        clickTimer = setTimeout(() => { clickCount = 0; }, 500); // عندك نص ثانية بين كليكة وكليكة
+
         if (clickCount === 3) {
-            if (prompt("Password:") === ADMIN_PASS) {
+            let pass = prompt("Enter Password:");
+            if (pass === ADMIN_PASS) {
                 document.getElementById('view-shop').classList.remove('active-view');
                 document.getElementById('view-admin').classList.add('active-view');
                 renderAdmin();
             }
+            clickCount = 0;
         }
-    }
+    });
 
     function admin_addProduct() {
         const name = document.getElementById('p-name').value;
@@ -87,10 +89,11 @@
         const link = document.getElementById('p-link').value;
         const desc = document.getElementById('p-desc').value;
 
-        if(!name || !link) return alert("Name and Link are required!");
+        if(!name || !link) return alert("Required fields missing!");
 
         products.unshift({ id: Date.now(), name, price, img, link, desc });
         save();
+        alert("Product added to JSON!");
     }
 
     function deleteProduct(id) {
@@ -107,29 +110,28 @@
 
     function renderShop() {
         const list = document.getElementById('product-list');
-        list.innerHTML = products.map(p => `
+        list.innerHTML = products.length ? products.map(p => `
             <div class="prod-card">
                 <img src="${p.img || 'https://via.placeholder.com/300'}" style="width:100%; height:200px; object-fit:cover">
-                <h3 style="margin:10px 0; font-family:'Playfair Display'">${p.name}</h3>
-                <p style="font-size:0.8rem; color:#666; margin-bottom:10px; flex-grow:1">${p.desc || ''}</p>
-                <p style="font-weight:bold; color:var(--leather); margin-bottom:10px">$${p.price}</p>
+                <h3 style="margin:10px 0;">${p.name}</h3>
+                <p style="font-size:0.8rem; color:#666; flex-grow:1">${p.desc || ''}</p>
+                <p style="font-weight:bold; color:var(--leather);">$${p.price}</p>
                 <a href="${p.link}" target="_blank" class="btn-buy">Buy Now</a>
             </div>
-        `).join('');
+        `).join('') : "<p style='grid-column:1/-1; text-align:center;'>No products yet. Enter Admin to add.</p>";
     }
 
     function renderAdmin() {
         const list = document.getElementById('admin-list');
-        list.innerHTML = "<h3>Current Products:</h3>" + products.map(p => `
-            <div style="background:#eee; padding:10px; margin:5px 0; display:flex; justify-content:space-between;">
+        list.innerHTML = "<h4>Current Inventory:</h4>" + products.map(p => `
+            <div style="background:#fff; padding:10px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between;">
                 <span>${p.name}</span>
-                <button onclick="deleteProduct(${p.id})" style="color:red; border:none; cursor:pointer;">Delete</button>
+                <button onclick="deleteProduct(${p.id})" style="color:red; border:none; background:none; cursor:pointer;">Delete</button>
             </div>
         `).join('');
     }
 
     renderShop();
-    if(products.length > 0) document.getElementById('json-output').value = JSON.stringify(products, null, 4);
 </script>
 </body>
 </html>
