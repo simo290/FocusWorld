@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus.World | Professional E-Commerce Engine</title>
+    <title>Focus.World | Affiliate Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root {
             --paper: #FDFBF7; --ink: #2C241B; --gold: #C5A059; --leather: #8B5E3C;
@@ -14,7 +13,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; }
         
-        /* Layout */
         header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--leather); position: sticky; top: 0; z-index: 1000; }
         .logo { font-family: 'Cinzel', serif; font-size: 1.6rem; cursor: pointer; }
         .nav-links button { background: none; border: 1px solid var(--ink); padding: 5px 15px; cursor: pointer; margin-left: 5px; font-weight: bold; }
@@ -23,74 +21,49 @@
         .view { display: none; }
         .active-view { display: block; }
 
-        /* Tables & Lists */
         table { width: 100%; border-collapse: collapse; background: white; margin-top: 1rem; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         th { background: var(--ink); color: white; }
 
-        /* Forms */
         .form-card { max-width: 500px; margin: auto; padding: 2rem; background: white; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
         .btn-block { width: 100%; padding: 15px; background: var(--ink); color: white; border: none; cursor: pointer; font-size: 1rem; font-weight: bold; }
         .btn-block:hover { background: var(--leather); }
 
-        /* Payment UI */
-        #payment-element { margin: 20px 0; padding: 15px; border: 1px solid #6772e5; border-radius: 4px; }
-        
-        /* Admin Badge */
-        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
-        .pending { background: #ffeeba; color: #856404; }
-        .paid { background: #d4edda; color: #155724; }
+        #json-output { background: #222; color: #0f0; padding: 15px; width: 100%; height: 150px; font-family: monospace; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo" onclick="navigateTo('shop')">Focus.World</div>
-    <div class="nav-links" id="header-nav"></div>
+    <div class="nav-links">
+        <button onclick="navigateTo('shop')">Shop</button>
+        <button onclick="navigateTo('admin')" style="background:var(--leather); color:white">Admin (JSON Gen)</button>
+    </div>
 </header>
 
 <div class="container">
     
-    <section id="view-auth" class="view">
-        <div class="form-card">
-            <h2 id="auth-title">Customer Login</h2>
-            <div id="register-only" style="display:none">
-                <input type="text" id="reg-name" placeholder="Full Name">
-            </div>
-            <input type="email" id="auth-email" placeholder="Email Address">
-            <input type="password" id="auth-pass" placeholder="Password">
-            <button class="btn-block" onclick="processAuth()">Continue</button>
-            <p style="text-align:center; margin-top:15px; cursor:pointer; text-decoration:underline;" onclick="toggleAuth()">Switch Login/Register</p>
-        </div>
-    </section>
-
     <section id="view-shop" class="view">
-        <h1 style="text-align:center; font-family:'Playfair Display'; margin-bottom:2rem;">The Masterpiece Collection</h1>
+        <h1 style="text-align:center; font-family:'Playfair Display'; margin-bottom:2rem;">The Affiliate Collection</h1>
         <div id="product-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:2rem;"></div>
     </section>
 
     <section id="view-checkout" class="view">
-        <h2 style="margin-bottom:1rem">Secure Checkout</h2>
+        <h2 style="margin-bottom:1rem">Complete Your Purchase</h2>
         <div style="display:grid; grid-template-columns: 1fr 400px; gap:2rem;">
             <div>
                 <div class="form-card" style="max-width:100%; margin:0;">
-                    <h3>Shipping Information</h3>
+                    <h3>Shipping Details</h3>
+                    <input type="text" id="cust-name" placeholder="Your Full Name">
+                    <input type="email" id="cust-email" placeholder="Email Address">
                     <input type="text" id="ship-address" placeholder="Full Street Address">
-                    <input type="text" id="ship-city" placeholder="City">
-                    <div id="payment-element">
-                        <p style="color:#6772e5; font-weight:bold;">💳 Stripe / PayPal Secure Gateway</p>
-                        <input type="text" placeholder="Card Number: 4242 4242 4242 4242" style="border-color:#6772e5">
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" placeholder="MM/YY">
-                            <input type="text" placeholder="CVC">
-                        </div>
-                    </div>
-                    <button class="btn-block" onclick="completePayment()" style="background:#6772e5">Pay Now & Confirm Order</button>
+                    <button class="btn-block" onclick="completePurchase()" style="background:#6772e5">Confirm Order</button>
                 </div>
             </div>
             <div style="background:#eee; padding:20px;">
-                <h3>Order Summary</h3>
+                <h3>Item Summary</h3>
                 <div id="checkout-items"></div>
                 <hr style="margin:10px 0">
                 <h3>Total: $<span id="checkout-total">0.00</span></h3>
@@ -99,70 +72,39 @@
     </section>
 
     <section id="view-admin" class="view">
-        <h1 style="border-bottom:3px solid var(--leather)">Curator Control Center</h1>
+        <h1 style="border-bottom:3px solid var(--leather)">Affiliate Content Manager</h1>
         
-        <div style="display:grid; grid-template-columns: 300px 1fr; gap:2rem; margin-top:2rem;">
+        <div style="display:grid; grid-template-columns: 400px 1fr; gap:2rem; margin-top:2rem;">
             <aside>
                 <div class="form-card" style="width:100%; padding:15px;">
-                    <h3>Manage Product</h3>
-                    <input type="hidden" id="edit-id">
+                    <h3>Add New Product</h3>
                     <input type="text" id="p-name" placeholder="Product Name">
-                    <input type="number" id="p-price" placeholder="Price">
+                    <input type="number" id="p-price" placeholder="Price ($)">
                     <input type="text" id="p-img" placeholder="Image URL">
-                    <input type="number" id="p-stock" placeholder="Stock">
-                    <button class="btn-block" onclick="admin_saveProduct()">Save Product</button>
-                    <button class="btn-block" onclick="admin_clearForm()" style="background:#666; margin-top:5px;">Clear</button>
+                    <textarea id="p-desc" placeholder="Product Description (The Problem it Solves)" rows="4"></textarea>
+                    <button class="btn-block" onclick="admin_addProduct()">Generate JSON Code</button>
                 </div>
             </aside>
 
             <main>
-                <h3>Inventory Status</h3>
+                <h3>Export to affiliate.json</h3>
+                <p><small>Copy this code and paste it into your affiliate.json file:</small></p>
+                <textarea id="json-output" readonly></textarea>
+                
+                <h3 style="margin-top:2rem">Current Preview</h3>
                 <table id="admin-inventory">
-                    <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-
-                <h3 style="margin-top:2rem">Global Sales (Orders)</h3>
-                <table id="admin-orders">
-                    <thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-
-                <h3 style="margin-top:2rem">Registered Customers</h3>
-                <table id="admin-users">
-                    <thead><tr><th>Name</th><th>Email</th><th>Join Date</th></tr></thead>
+                    <thead><tr><th>Name</th><th>Price</th><th>Description</th><th>Action</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </main>
         </div>
     </section>
-
 </div>
 
 <script>
-    // --- DATABASE MOCKUP ---
-    let DB = {
-        products: JSON.parse(localStorage.getItem('fw_prods')) || [
-            {id: 1, name: "Victorian Inkwell", price: 120, img: "https://picsum.photos/400/300?1", stock: 15},
-            {id: 2, name: "Hand-Bound Ledger", price: 85, img: "https://picsum.photos/400/300?2", stock: 8}
-        ],
-        users: JSON.parse(localStorage.getItem('fw_users')) || [
-            {email: "admin@focus.com", pass: "admin123", name: "Head Curator", role: "admin"}
-        ],
-        orders: JSON.parse(localStorage.getItem('fw_orders')) || []
-    };
-
-    let currentUser = JSON.parse(localStorage.getItem('fw_session')) || null;
+    // --- APP STATE ---
+    let products = JSON.parse(localStorage.getItem('fw_prods')) || [];
     let cart = [];
-    let isRegister = false;
-
-    function sync() {
-        localStorage.setItem('fw_prods', JSON.stringify(DB.products));
-        localStorage.setItem('fw_users', JSON.stringify(DB.users));
-        localStorage.setItem('fw_orders', JSON.stringify(DB.orders));
-        localStorage.setItem('fw_session', JSON.stringify(currentUser));
-        renderAll();
-    }
 
     // --- NAVIGATION ---
     function navigateTo(view) {
@@ -171,178 +113,94 @@
         renderAll();
     }
 
-    function toggleAuth() {
-        isRegister = !isRegister;
-        document.getElementById('auth-title').innerText = isRegister ? 'Customer Registration' : 'Customer Login';
-        document.getElementById('register-only').style.display = isRegister ? 'block' : 'none';
-    }
-
-    // --- AUTH LOGIC ---
-    function processAuth() {
-        const email = document.getElementById('auth-email').value;
-        const pass = document.getElementById('auth-pass').value;
-
-        if(isRegister) {
-            const name = document.getElementById('reg-name').value;
-            DB.users.push({name, email, pass, role: 'customer', joined: new Date().toLocaleDateString()});
-            alert("Account created! Please login.");
-            toggleAuth();
-        } else {
-            const user = DB.users.find(u => u.email === email && u.pass === pass);
-            if(user) {
-                currentUser = user;
-                sync();
-                navigateTo('shop');
-            } else {
-                alert("Invalid Credentials");
-            }
-        }
-    }
-
-    function logout() { currentUser = null; sync(); navigateTo('auth'); }
-
-    // --- SHOP & CHECKOUT ---
-    function addToCart(id) {
-        if(!currentUser) return navigateTo('auth');
-        const p = DB.products.find(x => x.id === id);
-        if(p.stock <= 0) return alert("Out of Stock");
-        cart.push(p);
+    // --- SHOP LOGIC ---
+    function buyNow(id) {
+        const p = products.find(x => x.id === id);
+        cart = [p]; // One item checkout
         navigateTo('checkout');
     }
 
-    function completePayment() {
-        // Here we simulate the Stripe "Charge Success"
-        const total = cart.reduce((a, b) => a + b.price, 0);
-        const order = {
-            id: "ORD-" + Math.floor(Math.random()*100000),
-            customer: currentUser.email,
-            total: total,
-            items: cart.map(i => i.name),
-            status: "Paid",
-            date: new Date().toLocaleString()
-        };
-
-        // Update Stock
-        cart.forEach(item => {
-            const p = DB.products.find(x => x.id === item.id);
-            if(p) p.stock--;
-        });
-
-        DB.orders.unshift(order);
+    function completePurchase() {
+        const name = document.getElementById('cust-name').value;
+        if(!name) return alert("Please enter your name");
+        alert("Thank you " + name + "! Redirecting to payment...");
         cart = [];
-        sync();
-        alert("Payment Successful! Your order " + order.id + " is being prepared.");
         navigateTo('shop');
     }
 
-    // --- ADMIN CRUD ---
-    function admin_saveProduct() {
-        const id = document.getElementById('edit-id').value;
+    // --- ADMIN / JSON LOGIC ---
+    function admin_addProduct() {
         const name = document.getElementById('p-name').value;
-        const price = Number(document.getElementById('p-price').value);
+        const price = document.getElementById('p-price').value;
         const img = document.getElementById('p-img').value;
-        const stock = Number(document.getElementById('p-stock').value);
+        const desc = document.getElementById('p-desc').value;
 
-        if(id) {
-            const idx = DB.products.findIndex(p => p.id == id);
-            DB.products[idx] = {id, name, price, img, stock};
-        } else {
-            DB.products.push({id: Date.now(), name, price, img, stock});
-        }
-        admin_clearForm();
-        sync();
+        if(!name || !price) return alert("Fill required fields");
+
+        const newProd = {
+            id: Date.now(),
+            name: name,
+            price: price,
+            img: img,
+            desc: desc
+        };
+
+        products.push(newProd);
+        localStorage.setItem('fw_prods', JSON.stringify(products));
+        
+        // Update JSON Textarea
+        document.getElementById('json-output').value = JSON.stringify(products, null, 4);
+        
+        // Clear inputs
+        document.getElementById('p-name').value = '';
+        document.getElementById('p-price').value = '';
+        document.getElementById('p-img').value = '';
+        document.getElementById('p-desc').value = '';
+
+        renderAll();
     }
 
-    function admin_edit(id) {
-        const p = DB.products.find(x => x.id == id);
-        document.getElementById('edit-id').value = p.id;
-        document.getElementById('p-name').value = p.name;
-        document.getElementById('p-price').value = p.price;
-        document.getElementById('p-img').value = p.img;
-        document.getElementById('p-stock').value = p.stock;
-    }
-
-    function admin_delete(id) {
-        DB.products = DB.products.filter(p => p.id != id);
-        sync();
-    }
-
-    function updateOrderStatus(id) {
-        const order = DB.orders.find(o => o.id === id);
-        order.status = order.status === "Paid" ? "Shipped" : "Delivered";
-        sync();
-    }
-
-    function admin_clearForm() {
-        document.getElementById('edit-id').value = "";
-        document.querySelectorAll('#view-admin input').forEach(i => i.value = "");
+    function deleteProduct(id) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('fw_prods', JSON.stringify(products));
+        document.getElementById('json-output').value = JSON.stringify(products, null, 4);
+        renderAll();
     }
 
     // --- RENDER ENGINE ---
     function renderAll() {
-        // Nav Update
-        const nav = document.getElementById('header-nav');
-        if(!currentUser) {
-            nav.innerHTML = `<button onclick="navigateTo('auth')">Login</button>`;
-        } else {
-            nav.innerHTML = `
-                <span>Welcome, ${currentUser.name}</span>
-                <button onclick="navigateTo('shop')">Shop</button>
-                ${currentUser.role === 'admin' ? `<button onclick="navigateTo('admin')" style="background:var(--leather); color:white">Curator Panel</button>` : ''}
-                <button onclick="logout()">Logout</button>
-            `;
-        }
-
-        // Shop Render
+        // Shop
         const shop = document.getElementById('product-list');
-        shop.innerHTML = DB.products.map(p => `
-            <div style="background:white; padding:15px; border:1px solid #ddd; text-align:center">
-                <img src="${p.img}" style="width:100%; height:200px; object-fit:cover">
-                <h3 style="margin:10px 0">${p.name}</h3>
-                <p style="color:var(--leather); font-weight:bold">$${p.price}</p>
-                <p><small>Stock: ${p.stock}</small></p>
-                <button class="btn-block" style="margin-top:10px" onclick="addToCart(${p.id})">Buy Now</button>
+        shop.innerHTML = products.map(p => `
+            <div style="background:white; padding:15px; border:1px solid #ddd; display:flex; flex-direction:column;">
+                <img src="${p.img || 'https://via.placeholder.com/300'}" style="width:100%; height:200px; object-fit:cover">
+                <h3 style="margin:10px 0; font-family:'Playfair Display'">${p.name}</h3>
+                <p style="font-size:0.9rem; color:#666; flex-grow:1; margin-bottom:10px">${p.desc || 'No description available.'}</p>
+                <p style="color:var(--leather); font-weight:bold; font-size:1.2rem; margin-bottom:10px">$${p.price}</p>
+                <button class="btn-block" onclick="buyNow(${p.id})">Buy Now</button>
             </div>
         `).join('');
 
-        // Checkout Render
-        document.getElementById('checkout-items').innerHTML = cart.map(i => `<p>${i.name} - $${i.price}</p>`).join('');
-        document.getElementById('checkout-total').innerText = cart.reduce((a, b) => a + b.price, 0).toFixed(2);
+        // Checkout
+        document.getElementById('checkout-items').innerHTML = cart.map(i => `<p><strong>${i.name}</strong> - $${i.price}</p>`).join('');
+        document.getElementById('checkout-total').innerText = cart.reduce((a, b) => a + Number(b.price), 0).toFixed(2);
 
-        // Admin Inventory
+        // Admin Table
         const inv = document.querySelector('#admin-inventory tbody');
-        inv.innerHTML = DB.products.map(p => `
+        inv.innerHTML = products.map(p => `
             <tr>
-                <td><img src="${p.img}" width="40"></td>
                 <td>${p.name}</td>
                 <td>$${p.price}</td>
-                <td>${p.stock}</td>
-                <td>
-                    <button onclick="admin_edit(${p.id})">Edit</button>
-                    <button onclick="admin_delete(${p.id})" style="color:red">Del</button>
-                </td>
+                <td style="font-size:0.8rem">${p.desc ? p.desc.substring(0,30)+'...' : ''}</td>
+                <td><button onclick="deleteProduct(${p.id})" style="color:red; border:none; background:none; cursor:pointer">Delete</button></td>
             </tr>
         `).join('');
-
-        // Admin Orders
-        const ords = document.querySelector('#admin-orders tbody');
-        ords.innerHTML = DB.orders.map(o => `
-            <tr>
-                <td>${o.id}</td>
-                <td>${o.customer}</td>
-                <td>$${o.total}</td>
-                <td><span class="status-badge ${o.status.toLowerCase()}">${o.status}</span></td>
-                <td><button onclick="updateOrderStatus('${o.id}')">Next Stage</button></td>
-            </tr>
-        `).join('');
-
-        // Admin Users
-        const usrs = document.querySelector('#admin-users tbody');
-        usrs.innerHTML = DB.users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.joined || 'N/A'}</td></tr>`).join('');
     }
 
-    // Initial Start
+    // Start
     navigateTo('shop');
+    // Set initial JSON if data exists
+    if(products.length > 0) document.getElementById('json-output').value = JSON.stringify(products, null, 4);
 </script>
 
 </body>
