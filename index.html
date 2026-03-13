@@ -22,7 +22,7 @@
             position: fixed; top: 0; width: 100%; z-index: 1000;
             transition: transform 0.4s ease-in-out; 
         }
-        header.hide { transform: translateY(-100%); } /* كايتخبا للفوق */
+        header.hide { transform: translateY(-100%); }
 
         .logo { 
             font-family: 'Cinzel', serif; font-size: 1.8rem; 
@@ -89,8 +89,8 @@
         <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:20px;">
             <div style="background:#111; padding:15px;">
                 <input type="text" id="p-name" placeholder="Name">
-                <input type="text" id="p-old" placeholder="Old Price">
-                <input type="text" id="p-curr" placeholder="Current Price">
+                <input type="text" id="p-old" placeholder="Old Price ($)">
+                <input type="text" id="p-curr" placeholder="Current Price ($)">
                 <input type="text" id="p-img" placeholder="Image URL">
                 <input type="text" id="p-link" placeholder="Affiliate Link">
                 <textarea id="p-desc" placeholder="Description" rows="3"></textarea>
@@ -121,10 +121,8 @@
             return;
         }
         if (currentScroll > lastScroll && !header.classList.contains("hide")) {
-            // Scroll Down
             header.classList.add("hide");
         } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
-            // Scroll Up
             header.classList.remove("hide");
         }
         lastScroll = currentScroll;
@@ -149,8 +147,8 @@
                 <h3 class="prod-title">${p.name}</h3>
                 <p style="font-size:0.85rem; color:#aaa; flex-grow:1;">${p.desc}</p>
                 <div class="price-tag">
-                    ${p.old ? `<span class="old-price">MAD ${p.old}</span>` : ''}
-                    <span class="current-price">MAD ${p.curr}</span>
+                    ${p.old ? `<span class="old-price">$${p.old}</span>` : ''}
+                    <span class="current-price">$${p.curr}</span>
                 </div>
                 <a href="${p.link}" target="_blank" class="btn-buy">GET IT NOW</a>
             </div>
@@ -198,7 +196,7 @@
     function renderAdmin() {
         document.getElementById('admin-list').innerHTML = allProducts.map(p => `
             <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
-                <span>${p.name}</span>
+                <span>${p.name} ($${p.curr})</span>
                 <button onclick="deleteProd(${p.id})" style="color:red; background:none; border:none; cursor:pointer;">X</button>
             </div>
         `).join('');
