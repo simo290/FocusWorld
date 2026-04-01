@@ -10,48 +10,76 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; }
         header { background: rgba(0,0,0,0.95); padding: 1.2rem; display: flex; justify-content: center; border-bottom: 1px solid #333; position: fixed; top: 0; width: 100%; z-index: 100; }
-        .logo { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 4px; cursor: pointer; }
+        .logo { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 4px; cursor: pointer; font-size: 1.5rem; }
         .container { max-width: 1100px; margin: 7rem auto 2rem; padding: 0 20px; }
-        .search-box { width: 100%; max-width: 400px; margin: 0 auto 3rem; display: block; padding: 12px; background: #1a1a1a; border: 1px solid var(--gold); color: #fff; border-radius: 25px; outline: none; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .card { background: var(--card); border: 1px solid #222; padding: 15px; border-radius: 12px; transition: 0.3s; display: flex; flex-direction: column; }
+        .search-box { width: 100%; max-width: 400px; margin: 0 auto 3rem; display: block; padding: 15px; background: #1a1a1a; border: 1px solid var(--gold); color: #fff; border-radius: 25px; outline: none; font-size: 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+        .card { background: var(--card); border: 1px solid #222; padding: 20px; border-radius: 12px; transition: 0.3s; display: flex; flex-direction: column; }
         .card:hover { border-color: var(--gold); transform: translateY(-5px); }
-        .img-box { width: 100%; height: 180px; background: #050505; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .img-box { width: 100%; height: 200px; background: #050505; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .title { font-family: 'Playfair Display'; color: var(--gold); font-size: 1.1rem; margin-bottom: 10px; }
-        .desc { font-size: 0.85rem; color: #aaa; flex-grow: 1; margin-bottom: 15px; }
-        .btn { display: block; padding: 10px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; text-align: center; font-weight: bold; border-radius: 6px; font-size: 0.8rem; }
+        .title { font-family: 'Playfair Display'; color: var(--gold); font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
+        .desc { font-size: 0.9rem; color: #aaa; flex-grow: 1; margin-bottom: 20px; line-height: 1.4; }
+        .btn { display: block; padding: 12px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; text-align: center; font-weight: bold; border-radius: 6px; font-size: 0.9rem; transition: 0.3s; }
         .btn:hover { background: var(--gold); color: #000; }
-        /* Admin Section */
-        #admin-panel { display: none; background: var(--card); padding: 25px; border: 1px solid var(--gold); border-radius: 12px; }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; }
-        #json-out { background: #000; color: #0f4; font-family: monospace; height: 150px; }
+        #admin-panel { display: none; background: var(--card); padding: 30px; border: 1px solid var(--gold); border-radius: 12px; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-size: 1rem; }
+        #json-out { background: #000; color: #0f4; font-family: monospace; height: 150px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <header><div class="logo" id="gate">FOCUS.WORLD</div></header>
     <div class="container">
         <div id="shop-view">
-            <input type="text" class="search-box" placeholder="Search tools..." onkeyup="search()">
+            <input type="text" class="search-box" placeholder="Search reading tools..." onkeyup="search()">
             <div id="list" class="grid"></div>
         </div>
         <div id="admin-panel">
-            <h2 style="color:var(--gold)">Admin Vault</h2>
-            <input type="text" id="n" placeholder="Name"><input type="text" id="i" placeholder="Image Link"><input type="text" id="l" placeholder="Affiliate Link"><textarea id="d" placeholder="Desc..."></textarea>
-            <button class="btn" onclick="add()" style="width:100%">GENERATE JSON</button>
-            <textarea id="json-out" readonly placeholder="Copy this to affiliate.json"></textarea>
-            <button class="btn" style="margin-top:10px; border-color:#555" onclick="location.reload()">EXIT</button>
+            <h2 style="color:var(--gold); margin-bottom: 20px;">Admin Vault</h2>
+            <input type="text" id="n" placeholder="Product Name">
+            <input type="text" id="i" placeholder="Image URL">
+            <input type="text" id="l" placeholder="Amazon Link">
+            <textarea id="d" placeholder="Description..." rows="3"></textarea>
+            <button class="btn" onclick="add()" style="width:100%; cursor: pointer;">GENERATE JSON</button>
+            <textarea id="json-out" readonly placeholder="Copy result to affiliate.json"></textarea>
+            <button class="btn" style="margin-top:15px; border-color:#555; color: #888; cursor: pointer;" onclick="location.reload()">EXIT & SAVE</button>
         </div>
     </div>
+
     <script>
-        let data = [];
-        // Fetch JSON
-        fetch('affiliate.json').then(r => r.json()).then(d => { data = d; render(data); }).catch(e => console.log("Missing JSON"));
+        // سلعة احتياطية باش السيت مايبقاش خاوي إيلا الـ JSON تقلب
+        let data = [
+            {
+                "name": "Amber Book Light",
+                "img": "https://m.media-amazon.com/images/I/61S8n0X-7vL._AC_SL1500_.jpg",
+                "link": "#",
+                "desc": "Perfect for night reading without eye strain."
+            }
+        ];
+
+        // محاولة جلب البيانات من الملف
+        async function loadData() {
+            try {
+                const response = await fetch('affiliate.json');
+                if (response.ok) {
+                    const fetchedData = await response.json();
+                    if(fetchedData.length > 0) data = fetchedData;
+                }
+            } catch (e) {
+                console.log("Local file access restricted. Using backup data.");
+            }
+            render(data);
+        }
 
         function render(arr) {
-            document.getElementById('list').innerHTML = arr.map(p => `
+            const listDiv = document.getElementById('list');
+            if(arr.length === 0) {
+                listDiv.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>No products found.</p>";
+                return;
+            }
+            listDiv.innerHTML = arr.map(p => `
                 <div class="card">
-                    <div class="img-box"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/200'"></div>
+                    <div class="img-box"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x200/141414/C5A059?text=Focus.World'"></div>
                     <div class="title">${p.name}</div>
                     <div class="desc">${p.desc}</div>
                     <a href="${p.link}" target="_blank" class="btn">CHECK PRICE</a>
@@ -66,17 +94,31 @@
 
         let clicks = 0;
         document.getElementById('gate').onclick = () => {
-            clicks++; setTimeout(() => clicks = 0, 800);
-            if(clicks === 3 && prompt("Pass:") === "canon_-!LB2107") {
-                document.getElementById('shop-view').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
+            clicks++;
+            setTimeout(() => clicks = 0, 800);
+            if(clicks === 3) {
+                let pass = prompt("Pass:");
+                if(pass === "canon_-!LB2107") {
+                    document.getElementById('shop-view').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                }
             }
         };
 
         function add() {
-            data.unshift({ name:document.getElementById('n').value, img:document.getElementById('i').value, link:document.getElementById('l').value, desc:document.getElementById('d').value });
+            const newItem = { 
+                name: document.getElementById('n').value, 
+                img: document.getElementById('i').value, 
+                link: document.getElementById('l').value, 
+                desc: document.getElementById('d').value 
+            };
+            if(!newItem.name || !newItem.link) return alert("Fill Name and Link!");
+            data.unshift(newItem);
             document.getElementById('json-out').value = JSON.stringify(data, null, 4);
+            alert("Added! Copy the JSON below to your file.");
         }
+
+        loadData();
     </script>
 </body>
 </html>
