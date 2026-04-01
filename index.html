@@ -3,122 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus.World | Premium Reading</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Focus.World | Reading Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0a0a0a; --card: #141414; --gold: #C5A059; --text: #e0e0e0; }
+        :root { 
+            --bg: #0f0f0f; --card-bg: #1a1a1a; --text: #e0e0e0; 
+            --gold: #C5A059; --gold-dim: #8c703d;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; }
-        header { background: rgba(0,0,0,0.95); padding: 1.2rem; display: flex; justify-content: center; border-bottom: 1px solid #333; position: fixed; top: 0; width: 100%; z-index: 100; }
-        .logo { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 4px; cursor: pointer; font-size: 1.5rem; }
-        .container { max-width: 1100px; margin: 7rem auto 2rem; padding: 0 20px; }
-        .search-box { width: 100%; max-width: 400px; margin: 0 auto 3rem; display: block; padding: 15px; background: #1a1a1a; border: 1px solid var(--gold); color: #fff; border-radius: 25px; outline: none; font-size: 1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-        .card { background: var(--card); border: 1px solid #222; padding: 20px; border-radius: 12px; transition: 0.3s; display: flex; flex-direction: column; }
-        .card:hover { border-color: var(--gold); transform: translateY(-5px); }
-        .img-box { width: 100%; height: 200px; background: #050505; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .title { font-family: 'Playfair Display'; color: var(--gold); font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
-        .desc { font-size: 0.9rem; color: #aaa; flex-grow: 1; margin-bottom: 20px; line-height: 1.4; }
-        .btn { display: block; padding: 12px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; text-align: center; font-weight: bold; border-radius: 6px; font-size: 0.9rem; transition: 0.3s; }
-        .btn:hover { background: var(--gold); color: #000; }
-        #admin-panel { display: none; background: var(--card); padding: 30px; border: 1px solid var(--gold); border-radius: 12px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-size: 1rem; }
-        #json-out { background: #000; color: #0f4; font-family: monospace; height: 150px; margin-top: 10px; }
+        
+        /* Header Hide on Scroll */
+        header { 
+            background: rgba(0,0,0,0.95); 
+            padding: 1.2rem 5%; 
+            display: flex; justify-content: center; 
+            border-bottom: 1px solid var(--gold-dim); 
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            transition: transform 0.4s ease-in-out; 
+        }
+        header.hide { transform: translateY(-100%); }
+
+        .logo { 
+            font-family: 'Cinzel', serif; font-size: 1.8rem; 
+            color: var(--gold); letter-spacing: 4px; cursor: pointer; user-select: none;
+        }
+
+        .container { max-width: 1200px; margin: 7rem auto 3rem auto; padding: 0 20px; }
+        
+        /* Search Bar Style */
+        .search-container { 
+            text-align: center; margin-bottom: 3rem; position: relative; max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        #search-input {
+            width: 100%; padding: 12px 20px; background: transparent; 
+            border: 1px solid var(--gold-dim); color: #fff; font-family: 'Lato';
+            border-radius: 25px; outline: none; transition: 0.3s;
+        }
+        #search-input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(197, 160, 89, 0.2); }
+
+        .view { display: none; }
+        .active-view { display: block; animation: fadeIn 0.8s ease-in; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .prod-card { 
+            background: var(--card-bg); border: 1px solid #333; padding: 15px; 
+            transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .prod-card:hover { border-color: var(--gold); }
+        .prod-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid #333; margin-bottom: 15px; }
+        .prod-title { font-family: 'Playfair Display'; color: var(--gold); margin-bottom: 8px; }
+        .price-tag { margin-top: auto; padding-top: 15px; }
+        .old-price { text-decoration: line-through; color: #666; font-size: 0.85rem; margin-right: 8px; }
+        .current-price { color: #fff; font-weight: bold; }
+        .btn-buy { 
+            display: block; margin-top: 15px; padding: 10px; border: 1px solid var(--gold);
+            color: var(--gold); text-decoration: none; text-align: center; font-family: 'Cinzel'; font-size: 0.8rem;
+        }
+        .btn-buy:hover { background: var(--gold); color: #000; }
+
+        /* Admin Styles */
+        #view-admin { background: rgba(20,20,20,0.98); padding: 30px; border: 1px solid var(--gold); }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid #444; color: #fff; }
+        #json-output { background: #000; color: #0f0; width: 100%; height: 150px; font-family: monospace; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-    <header><div class="logo" id="gate">FOCUS.WORLD</div></header>
-    <div class="container">
-        <div id="shop-view">
-            <input type="text" class="search-box" placeholder="Search reading tools..." onkeyup="search()">
-            <div id="list" class="grid"></div>
-        </div>
-        <div id="admin-panel">
-            <h2 style="color:var(--gold); margin-bottom: 20px;">Admin Vault</h2>
-            <input type="text" id="n" placeholder="Product Name">
-            <input type="text" id="i" placeholder="Image URL">
-            <input type="text" id="l" placeholder="Amazon Link">
-            <textarea id="d" placeholder="Description..." rows="3"></textarea>
-            <button class="btn" onclick="add()" style="width:100%; cursor: pointer;">GENERATE JSON</button>
-            <textarea id="json-out" readonly placeholder="Copy result to affiliate.json"></textarea>
-            <button class="btn" style="margin-top:15px; border-color:#555; color: #888; cursor: pointer;" onclick="location.reload()">EXIT & SAVE</button>
-        </div>
-    </div>
 
-    <script>
-        // سلعة احتياطية باش السيت مايبقاش خاوي إيلا الـ JSON تقلب
-        let data = [
-            {
-                "name": "Amber Book Light",
-                "img": "https://m.media-amazon.com/images/I/61S8n0X-7vL._AC_SL1500_.jpg",
-                "link": "#",
-                "desc": "Perfect for night reading without eye strain."
-            }
-        ];
+<header id="main-header">
+    <div class="logo" id="admin-trigger">FOCUS.WORLD</div>
+</header>
 
-        // محاولة جلب البيانات من الملف
-        async function loadData() {
-            try {
-                const response = await fetch('affiliate.json');
-                if (response.ok) {
-                    const fetchedData = await response.json();
-                    if(fetchedData.length > 0) data = fetchedData;
-                }
-            } catch (e) {
-                console.log("Local file access restricted. Using backup data.");
-            }
-            render(data);
+<div class="container">
+    <section id="view-shop" class="view active-view">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for your next reading tool..." onkeyup="filterProducts()">
+        </div>
+        <div id="product-list" class="grid"></div>
+    </section>
+
+    <section id="view-admin" class="view">
+        <h2 style="color:var(--gold); margin-bottom:20px;">Admin Inventory</h2>
+        <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:20px;">
+            <div style="background:#111; padding:15px;">
+                <input type="text" id="p-name" placeholder="Name">
+                <input type="text" id="p-old" placeholder="Old Price ($)">
+                <input type="text" id="p-curr" placeholder="Current Price ($)">
+                <input type="text" id="p-img" placeholder="Image URL">
+                <input type="text" id="p-link" placeholder="Affiliate Link">
+                <textarea id="p-desc" placeholder="Description" rows="3"></textarea>
+                <button class="btn-buy" style="width:100%" onclick="admin_addProduct()">Generate JSON</button>
+                <button class="btn-buy" style="width:100%; border-color:#555; color:#555" onclick="window.location.reload()">Exit</button>
+            </div>
+            <div>
+                <textarea id="json-output" readonly></textarea>
+                <div id="admin-list" style="margin-top:20px"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    let allProducts = [];
+    const ADMIN_PASS = "canon_-!LB2107";
+    let clicks = 0;
+
+    // 1. Header Logic: Hide on Scroll
+    let lastScroll = 0;
+    const header = document.getElementById("main-header");
+
+    window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+        if (currentScroll <= 0) {
+            header.classList.remove("hide");
+            return;
         }
+        if (currentScroll > lastScroll && !header.classList.contains("hide")) {
+            header.classList.add("hide");
+        } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
+            header.classList.remove("hide");
+        }
+        lastScroll = currentScroll;
+    });
 
-        function render(arr) {
-            const listDiv = document.getElementById('list');
-            if(arr.length === 0) {
-                listDiv.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>No products found.</p>";
-                return;
+    // 2. Load and Render
+    async function loadData() {
+        try {
+            const res = await fetch('affiliate.json');
+            if(res.ok) {
+                allProducts = await res.json();
+                renderShop(allProducts);
             }
-            listDiv.innerHTML = arr.map(p => `
-                <div class="card">
-                    <div class="img-box"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x200/141414/C5A059?text=Focus.World'"></div>
-                    <div class="title">${p.name}</div>
-                    <div class="desc">${p.desc}</div>
-                    <a href="${p.link}" target="_blank" class="btn">CHECK PRICE</a>
+        } catch(e) { console.log("JSON Load Error"); }
+    }
+
+    function renderShop(data) {
+        const list = document.getElementById('product-list');
+        list.innerHTML = data.map(p => `
+            <div class="prod-card">
+                <img src="${p.img}" class="prod-img">
+                <h3 class="prod-title">${p.name}</h3>
+                <p style="font-size:0.85rem; color:#aaa; flex-grow:1;">${p.desc}</p>
+                <div class="price-tag">
+                    ${p.old ? `<span class="old-price">$${p.old}</span>` : ''}
+                    <span class="current-price">$${p.curr}</span>
                 </div>
-            `).join('');
-        }
+                <a href="${p.link}" target="_blank" class="btn-buy">GET IT NOW</a>
+            </div>
+        `).join('');
+    }
 
-        function search() {
-            let val = document.querySelector('.search-box').value.toLowerCase();
-            render(data.filter(p => p.name.toLowerCase().includes(val)));
-        }
+    // 3. Search Logic
+    function filterProducts() {
+        const term = document.getElementById('search-input').value.toLowerCase();
+        const filtered = allProducts.filter(p => 
+            p.name.toLowerCase().includes(term) || 
+            p.desc.toLowerCase().includes(term)
+        );
+        renderShop(filtered);
+    }
 
-        let clicks = 0;
-        document.getElementById('gate').onclick = () => {
-            clicks++;
-            setTimeout(() => clicks = 0, 800);
-            if(clicks === 3) {
-                let pass = prompt("Pass:");
-                if(pass === "canon_-!LB2107") {
-                    document.getElementById('shop-view').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                }
+    // 4. Admin Secret
+    document.getElementById('admin-trigger').addEventListener('click', () => {
+        clicks++;
+        setTimeout(() => clicks = 0, 1000);
+        if(clicks === 3) {
+            if(prompt("Admin Pass:") === ADMIN_PASS) {
+                document.getElementById('view-shop').style.display = 'none';
+                document.getElementById('view-admin').classList.add('active-view');
+                renderAdmin();
             }
-        };
-
-        function add() {
-            const newItem = { 
-                name: document.getElementById('n').value, 
-                img: document.getElementById('i').value, 
-                link: document.getElementById('l').value, 
-                desc: document.getElementById('d').value 
-            };
-            if(!newItem.name || !newItem.link) return alert("Fill Name and Link!");
-            data.unshift(newItem);
-            document.getElementById('json-out').value = JSON.stringify(data, null, 4);
-            alert("Added! Copy the JSON below to your file.");
         }
+    });
 
-        loadData();
-    </script>
+    function admin_addProduct() {
+        const p = {
+            id: Date.now(),
+            name: document.getElementById('p-name').value,
+            old: document.getElementById('p-old').value,
+            curr: document.getElementById('p-curr').value,
+            img: document.getElementById('p-img').value,
+            link: document.getElementById('p-link').value,
+            desc: document.getElementById('p-desc').value
+        };
+        allProducts.unshift(p);
+        document.getElementById('json-output').value = JSON.stringify(allProducts, null, 4);
+        renderAdmin();
+    }
+
+    function renderAdmin() {
+        document.getElementById('admin-list').innerHTML = allProducts.map(p => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
+                <span>${p.name} ($${p.curr})</span>
+                <button onclick="deleteProd(${p.id})" style="color:red; background:none; border:none; cursor:pointer;">X</button>
+            </div>
+        `).join('');
+    }
+
+    function deleteProd(id) {
+        allProducts = allProducts.filter(x => x.id !== id);
+        document.getElementById('json-output').value = JSON.stringify(allProducts, null, 4);
+        renderAdmin();
+    }
+
+    loadData();
+</script>
 </body>
 </html>
