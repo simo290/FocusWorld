@@ -14,8 +14,7 @@
         body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; overflow-x: hidden; }
         
         header { 
-            background: rgba(0,0,0,0.95); 
-            padding: 1.2rem 5%; 
+            background: rgba(0,0,0,0.95); padding: 1.2rem 5%; 
             display: flex; justify-content: center; 
             border-bottom: 1px solid var(--gold-dim); 
             position: fixed; top: 0; width: 100%; z-index: 1000;
@@ -45,12 +44,12 @@
 
         .grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 2.5rem; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 2rem; 
             align-items: start;
         }
         
-        /* Product Card Styles */
+        /* Product Card */
         .prod-card { 
             background: var(--card-bg); 
             border: 1px solid #333; 
@@ -63,12 +62,15 @@
             position: relative;
         }
 
+        /* Tsawr Amazon Fix */
         .prod-img { 
             width: 100%; 
-            height: 220px; 
-            object-fit: cover; 
+            height: 230px; 
+            object-fit: contain; /* Kat-khlli l-ktab iban kamel */
+            background: white;   /* Amazon images are usually on white background */
             border-radius: 10px;
             margin-bottom: 15px; 
+            padding: 10px;
             flex-shrink: 0;
         }
         
@@ -99,18 +101,18 @@
         }
         .btn-buy:hover { background: var(--gold); color: #000; }
 
-        /* --- DESKTOP SPECIFIC (Hover Effect) --- */
+        /* Desktop Hover Optimization */
         @media (min-width: 769px) {
-            .prod-card { max-height: 470px; }
+            .prod-card { max-height: 480px; }
             .prod-card:hover { 
                 border-color: var(--gold); 
                 transform: translateY(-10px); 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-                max-height: 1200px; /* Expand on hover */
+                max-height: 1200px; 
             }
             .prod-desc {
                 display: -webkit-box;
-                -webkit-line-clamp: 2; /* Show only 2 lines initially */
+                -webkit-line-clamp: 2; 
                 -webkit-box-orient: vertical;  
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -122,18 +124,13 @@
             }
         }
 
-        /* --- MOBILE SPECIFIC (Fixed View) --- */
+        /* Mobile Optimization */
         @media (max-width: 768px) {
             .container { margin-top: 6rem; }
-            .grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .prod-card { max-height: none; } /* No height limit on mobile */
-            .prod-desc { 
-                display: block; 
-                -webkit-line-clamp: unset; 
-                overflow: visible; 
-            }
+            .prod-card { max-height: none; } 
+            .prod-desc { display: block; -webkit-line-clamp: unset; overflow: visible; }
             .prod-img { height: 200px; }
-            .logo { font-size: 1.5rem; letter-spacing: 2px; }
+            .logo { font-size: 1.5rem; }
         }
 
         /* Admin Styles */
@@ -159,7 +156,7 @@
     </section>
 
     <section id="view-admin" class="view">
-        <h2 style="color:var(--gold); margin-bottom:20px;">Admin Inventory</h2>
+        <h2 style="color:var(--gold); margin-bottom:20px;">Admin Inventory (JSON)</h2>
         <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:20px;">
             <div style="background:#111; padding:15px; border-radius: 10px;">
                 <input type="text" id="p-name" placeholder="Product Name">
@@ -170,7 +167,7 @@
                 <button class="btn-buy" style="width:100%; border-color:#555; color:#555; margin-top:10px;" onclick="window.location.reload()">Exit Admin</button>
             </div>
             <div>
-                <textarea id="json-output" readonly placeholder="JSON Output will appear here..."></textarea>
+                <textarea id="json-output" readonly placeholder="Copy this JSON to your affiliate.json file..."></textarea>
                 <div id="admin-list" style="margin-top:20px"></div>
             </div>
         </div>
@@ -196,7 +193,7 @@
         lastScroll = currentScroll;
     });
 
-    // Load Data
+    // Load Data from JSON
     async function loadData() {
         try {
             const res = await fetch('affiliate.json');
@@ -204,7 +201,7 @@
                 allProducts = await res.json();
                 renderShop(allProducts);
             }
-        } catch(e) { console.log("JSON Load Error"); }
+        } catch(e) { console.log("JSON Load Error - Check if affiliate.json exists"); }
     }
 
     function renderShop(data) {
@@ -220,7 +217,6 @@
         `).join('');
     }
 
-    // Search Logic
     function filterProducts() {
         const term = document.getElementById('search-input').value.toLowerCase();
         const filtered = allProducts.filter(p => 
@@ -230,13 +226,12 @@
         renderShop(filtered);
     }
 
-    // Admin Secret (3 clicks on Logo)
+    // Admin Access (3 Clicks on Logo)
     document.getElementById('admin-trigger').addEventListener('click', () => {
         clicks++;
         setTimeout(() => clicks = 0, 1000);
         if(clicks === 3) {
-            let pass = prompt("Admin Pass:");
-            if(pass === ADMIN_PASS) {
+            if(prompt("Admin Pass:") === ADMIN_PASS) {
                 document.getElementById('view-shop').style.display = 'none';
                 document.getElementById('view-admin').classList.add('active-view');
                 renderAdmin();
@@ -260,7 +255,7 @@
 
     function renderAdmin() {
         document.getElementById('admin-list').innerHTML = allProducts.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #333; align-items:center;">
+            <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #333; align-items:center; color:white;">
                 <span>${p.name}</span>
                 <button onclick="deleteProd(${p.id})" style="color:#ff4444; background:none; border:none; cursor:pointer; font-weight:bold;">DELETE</button>
             </div>
