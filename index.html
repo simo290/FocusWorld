@@ -32,10 +32,13 @@
         .search-container { 
             text-align: center; margin-bottom: 3rem; position: relative; max-width: 500px; margin-left: auto; margin-right: auto;
         }
+        
+        /* iOS Zoom Fix & Font Size Update */
         #search-input {
             width: 100%; padding: 12px 20px; background: transparent; 
             border: 1px solid var(--gold-dim); color: #fff; font-family: 'Lato';
             border-radius: 25px; outline: none; transition: 0.3s;
+            font-size: 16px; 
         }
         #search-input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(197, 160, 89, 0.2); }
 
@@ -49,25 +52,25 @@
             align-items: start;
         }
         
-        /* Product Card */
+        /* Product Card Base */
         .prod-card { 
             background: var(--card-bg); 
             border: 1px solid #333; 
             padding: 20px; 
             border-radius: 15px; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
             display: flex; 
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Tsawr Amazon Fix */
+        /* Amazon Image Correction */
         .prod-img { 
             width: 100%; 
             height: 230px; 
-            object-fit: contain; /* Kat-khlli l-ktab iban kamel */
-            background: white;   /* Amazon images are usually on white background */
+            object-fit: contain; 
+            background: #ffffff; 
             border-radius: 10px;
             margin-bottom: 15px; 
             padding: 10px;
@@ -92,24 +95,33 @@
             margin-top: auto;
         }
 
+        /* Base Button (Mobile Optimized by default, tweaked in desktop) */
         .btn-buy { 
-            display: block; padding: 12px; border: 1px solid var(--gold);
-            color: var(--gold); text-decoration: none; text-align: center; 
-            font-family: 'Cinzel'; font-size: 0.8rem; border-radius: 8px;
+            display: block; 
+            padding: 14px; 
+            border: 1px solid var(--gold);
+            color: var(--gold); 
+            text-decoration: none; 
+            text-align: center; 
+            font-family: 'Cinzel'; 
+            font-size: 1rem; 
+            border-radius: 8px;
             transition: 0.3s;
             flex-shrink: 0;
         }
         .btn-buy:hover { background: var(--gold); color: #000; }
 
-        /* Desktop Hover Optimization */
+        /* Desktop Hover Logic (min-width: 769px) */
         @media (min-width: 769px) {
             .prod-card { max-height: 480px; }
+            
             .prod-card:hover { 
                 border-color: var(--gold); 
                 transform: translateY(-10px); 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.8);
                 max-height: 1200px; 
             }
+
             .prod-desc {
                 display: -webkit-box;
                 -webkit-line-clamp: 2; 
@@ -117,19 +129,34 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
             .prod-card:hover .prod-desc {
                 -webkit-line-clamp: unset; 
                 display: block;
                 overflow: visible;
             }
+
+            .btn-buy { padding: 12px; font-size: 0.8rem; }
         }
 
-        /* Mobile Optimization */
+        /* Mobile Optimization (max-width: 768px) */
         @media (max-width: 768px) {
             .container { margin-top: 6rem; }
-            .prod-card { max-height: none; } 
-            .prod-desc { display: block; -webkit-line-clamp: unset; overflow: visible; }
-            .prod-img { height: 200px; }
+            
+            .grid { 
+                grid-template-columns: 1fr; /* Full width cards */
+            }
+
+            .prod-card { 
+                max-height: none; /* Disable hover expansion constraint */
+            } 
+
+            .prod-desc { 
+                display: block; 
+                -webkit-line-clamp: unset; 
+                overflow: visible; 
+            }
+
             .logo { font-size: 1.5rem; }
         }
 
@@ -175,11 +202,11 @@
 </div>
 
 <script>
+    // JS Logic remains unchanged as requested updates were CSS/Structure focused
     let allProducts = [];
     const ADMIN_PASS = "canon_-!LB2107";
     let clicks = 0;
 
-    // Header Logic
     let lastScroll = 0;
     const header = document.getElementById("main-header");
     window.addEventListener("scroll", () => {
@@ -193,7 +220,6 @@
         lastScroll = currentScroll;
     });
 
-    // Load Data from JSON
     async function loadData() {
         try {
             const res = await fetch('affiliate.json');
@@ -201,7 +227,7 @@
                 allProducts = await res.json();
                 renderShop(allProducts);
             }
-        } catch(e) { console.log("JSON Load Error - Check if affiliate.json exists"); }
+        } catch(e) { console.log("JSON Load Error"); }
     }
 
     function renderShop(data) {
@@ -226,7 +252,6 @@
         renderShop(filtered);
     }
 
-    // Admin Access (3 Clicks on Logo)
     document.getElementById('admin-trigger').addEventListener('click', () => {
         clicks++;
         setTimeout(() => clicks = 0, 1000);
