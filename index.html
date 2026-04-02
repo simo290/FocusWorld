@@ -13,7 +13,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; }
         
-        /* Header Hide on Scroll */
         header { 
             background: rgba(0,0,0,0.95); 
             padding: 1.2rem 5%; 
@@ -31,7 +30,6 @@
 
         .container { max-width: 1200px; margin: 7rem auto 3rem auto; padding: 0 20px; }
         
-        /* Search Bar Style */
         .search-container { 
             text-align: center; margin-bottom: 3rem; position: relative; max-width: 500px; margin-left: auto; margin-right: auto;
         }
@@ -46,26 +44,63 @@
         .active-view { display: block; animation: fadeIn 0.8s ease-in; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        
+        /* Product Card Updated */
         .prod-card { 
-            background: var(--card-bg); border: 1px solid #333; padding: 15px; 
-            transition: 0.3s; display: flex; flex-direction: column;
+            background: var(--card-bg); 
+            border: 1px solid #333; 
+            padding: 20px; 
+            border-radius: 15px; /* Hwaf mdwra */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; 
+            flex-direction: column;
+            overflow: hidden;
         }
-        .prod-card:hover { border-color: var(--gold); }
-        .prod-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid #333; margin-bottom: 15px; }
-        .prod-title { font-family: 'Playfair Display'; color: var(--gold); margin-bottom: 8px; }
-        .price-tag { margin-top: auto; padding-top: 15px; }
-        .old-price { text-decoration: line-through; color: #666; font-size: 0.85rem; margin-right: 8px; }
-        .current-price { color: #fff; font-weight: bold; }
+        
+        /* Hover Effect: Hazz l-card */
+        .prod-card:hover { 
+            border-color: var(--gold); 
+            transform: translateY(-10px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .prod-img { 
+            width: 100%; 
+            height: 220px; 
+            object-fit: cover; /* Katnasb m3a ay tswira */
+            border-radius: 10px;
+            margin-bottom: 15px; 
+        }
+        
+        .prod-title { font-family: 'Playfair Display'; color: var(--gold); margin-bottom: 12px; font-size: 1.4rem; }
+        
+        .prod-desc { 
+            font-size: 0.95rem; 
+            color: #ccc; 
+            flex-grow: 1; 
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .amazon-note { 
+            font-size: 0.8rem; 
+            color: var(--gold-dim); 
+            margin-bottom: 10px; 
+            font-style: italic;
+        }
+
         .btn-buy { 
-            display: block; margin-top: 15px; padding: 10px; border: 1px solid var(--gold);
-            color: var(--gold); text-decoration: none; text-align: center; font-family: 'Cinzel'; font-size: 0.8rem;
+            display: block; padding: 12px; border: 1px solid var(--gold);
+            color: var(--gold); text-decoration: none; text-align: center; 
+            font-family: 'Cinzel'; font-size: 0.8rem; border-radius: 8px;
+            transition: 0.3s;
         }
         .btn-buy:hover { background: var(--gold); color: #000; }
 
         /* Admin Styles */
-        #view-admin { background: rgba(20,20,20,0.98); padding: 30px; border: 1px solid var(--gold); }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid #444; color: #fff; }
-        #json-output { background: #000; color: #0f0; width: 100%; height: 150px; font-family: monospace; }
+        #view-admin { background: rgba(20,20,20,0.98); padding: 30px; border: 1px solid var(--gold); border-radius: 15px; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; }
+        #json-output { background: #000; color: #0f0; width: 100%; height: 150px; font-family: monospace; border-radius: 5px; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -87,18 +122,16 @@
     <section id="view-admin" class="view">
         <h2 style="color:var(--gold); margin-bottom:20px;">Admin Inventory</h2>
         <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:20px;">
-            <div style="background:#111; padding:15px;">
-                <input type="text" id="p-name" placeholder="Name">
-                <input type="text" id="p-old" placeholder="Old Price ($)">
-                <input type="text" id="p-curr" placeholder="Current Price ($)">
+            <div style="background:#111; padding:15px; border-radius: 10px;">
+                <input type="text" id="p-name" placeholder="Product Name">
                 <input type="text" id="p-img" placeholder="Image URL">
-                <input type="text" id="p-link" placeholder="Affiliate Link">
-                <textarea id="p-desc" placeholder="Description" rows="3"></textarea>
+                <input type="text" id="p-link" placeholder="Amazon Affiliate Link">
+                <textarea id="p-desc" placeholder="Product Description" rows="4"></textarea>
                 <button class="btn-buy" style="width:100%" onclick="admin_addProduct()">Generate JSON</button>
-                <button class="btn-buy" style="width:100%; border-color:#555; color:#555" onclick="window.location.reload()">Exit</button>
+                <button class="btn-buy" style="width:100%; border-color:#555; color:#555; margin-top:10px;" onclick="window.location.reload()">Exit Admin</button>
             </div>
             <div>
-                <textarea id="json-output" readonly></textarea>
+                <textarea id="json-output" readonly placeholder="JSON Output will appear here..."></textarea>
                 <div id="admin-list" style="margin-top:20px"></div>
             </div>
         </div>
@@ -110,16 +143,12 @@
     const ADMIN_PASS = "canon_-!LB2107";
     let clicks = 0;
 
-    // 1. Header Logic: Hide on Scroll
+    // 1. Header Logic
     let lastScroll = 0;
     const header = document.getElementById("main-header");
-
     window.addEventListener("scroll", () => {
         const currentScroll = window.pageYOffset;
-        if (currentScroll <= 0) {
-            header.classList.remove("hide");
-            return;
-        }
+        if (currentScroll <= 0) { header.classList.remove("hide"); return; }
         if (currentScroll > lastScroll && !header.classList.contains("hide")) {
             header.classList.add("hide");
         } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
@@ -145,12 +174,9 @@
             <div class="prod-card">
                 <img src="${p.img}" class="prod-img">
                 <h3 class="prod-title">${p.name}</h3>
-                <p style="font-size:0.85rem; color:#aaa; flex-grow:1;">${p.desc}</p>
-                <div class="price-tag">
-                    ${p.old ? `<span class="old-price">$${p.old}</span>` : ''}
-                    <span class="current-price">$${p.curr}</span>
-                </div>
-                <a href="${p.link}" target="_blank" class="btn-buy">GET IT NOW</a>
+                <p class="prod-desc">${p.desc}</p>
+                <p class="amazon-note">Check price on our Amazon store</p>
+                <a href="${p.link}" target="_blank" class="btn-buy">VIEW ON AMAZON</a>
             </div>
         `).join('');
     }
@@ -182,12 +208,11 @@
         const p = {
             id: Date.now(),
             name: document.getElementById('p-name').value,
-            old: document.getElementById('p-old').value,
-            curr: document.getElementById('p-curr').value,
             img: document.getElementById('p-img').value,
             link: document.getElementById('p-link').value,
             desc: document.getElementById('p-desc').value
         };
+        if(!p.name || !p.link) return alert("Please fill Name and Link");
         allProducts.unshift(p);
         document.getElementById('json-output').value = JSON.stringify(allProducts, null, 4);
         renderAdmin();
@@ -195,9 +220,9 @@
 
     function renderAdmin() {
         document.getElementById('admin-list').innerHTML = allProducts.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
-                <span>${p.name} ($${p.curr})</span>
-                <button onclick="deleteProd(${p.id})" style="color:red; background:none; border:none; cursor:pointer;">X</button>
+            <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #333; align-items:center;">
+                <span>${p.name}</span>
+                <button onclick="deleteProd(${p.id})" style="color:#ff4444; background:none; border:none; cursor:pointer; font-weight:bold;">DELETE</button>
             </div>
         `).join('');
     }
