@@ -11,7 +11,7 @@
             --gold: #C5A059; --gold-dim: #8c703d;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; }
+        body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; overflow-x: hidden; }
         
         header { 
             background: rgba(0,0,0,0.95); 
@@ -28,7 +28,7 @@
             color: var(--gold); letter-spacing: 4px; cursor: pointer; user-select: none;
         }
 
-        .container { max-width: 1200px; margin: 7rem auto 3rem auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 8rem auto 3rem auto; padding: 0 20px; }
         
         .search-container { 
             text-align: center; margin-bottom: 3rem; position: relative; max-width: 500px; margin-left: auto; margin-right: auto;
@@ -43,33 +43,33 @@
         .view { display: none; }
         .active-view { display: block; animation: fadeIn 0.8s ease-in; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 2.5rem; 
+            align-items: start;
+        }
         
-        /* Product Card Updated */
+        /* Product Card Styles */
         .prod-card { 
             background: var(--card-bg); 
             border: 1px solid #333; 
             padding: 20px; 
-            border-radius: 15px; /* Hwaf mdwra */
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border-radius: 15px; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
             display: flex; 
             flex-direction: column;
             overflow: hidden;
-        }
-        
-        /* Hover Effect: Hazz l-card */
-        .prod-card:hover { 
-            border-color: var(--gold); 
-            transform: translateY(-10px); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
         }
 
         .prod-img { 
             width: 100%; 
             height: 220px; 
-            object-fit: cover; /* Katnasb m3a ay tswira */
+            object-fit: cover; 
             border-radius: 10px;
             margin-bottom: 15px; 
+            flex-shrink: 0;
         }
         
         .prod-title { font-family: 'Playfair Display'; color: var(--gold); margin-bottom: 12px; font-size: 1.4rem; }
@@ -77,16 +77,17 @@
         .prod-desc { 
             font-size: 0.95rem; 
             color: #ccc; 
-            flex-grow: 1; 
-            line-height: 1.5;
+            line-height: 1.6;
             margin-bottom: 15px;
+            transition: all 0.3s ease;
         }
 
         .amazon-note { 
             font-size: 0.8rem; 
             color: var(--gold-dim); 
-            margin-bottom: 10px; 
+            margin-bottom: 15px; 
             font-style: italic;
+            margin-top: auto;
         }
 
         .btn-buy { 
@@ -94,8 +95,46 @@
             color: var(--gold); text-decoration: none; text-align: center; 
             font-family: 'Cinzel'; font-size: 0.8rem; border-radius: 8px;
             transition: 0.3s;
+            flex-shrink: 0;
         }
         .btn-buy:hover { background: var(--gold); color: #000; }
+
+        /* --- DESKTOP SPECIFIC (Hover Effect) --- */
+        @media (min-width: 769px) {
+            .prod-card { max-height: 470px; }
+            .prod-card:hover { 
+                border-color: var(--gold); 
+                transform: translateY(-10px); 
+                box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+                max-height: 1200px; /* Expand on hover */
+            }
+            .prod-desc {
+                display: -webkit-box;
+                -webkit-line-clamp: 2; /* Show only 2 lines initially */
+                -webkit-box-orient: vertical;  
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .prod-card:hover .prod-desc {
+                -webkit-line-clamp: unset; 
+                display: block;
+                overflow: visible;
+            }
+        }
+
+        /* --- MOBILE SPECIFIC (Fixed View) --- */
+        @media (max-width: 768px) {
+            .container { margin-top: 6rem; }
+            .grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .prod-card { max-height: none; } /* No height limit on mobile */
+            .prod-desc { 
+                display: block; 
+                -webkit-line-clamp: unset; 
+                overflow: visible; 
+            }
+            .prod-img { height: 200px; }
+            .logo { font-size: 1.5rem; letter-spacing: 2px; }
+        }
 
         /* Admin Styles */
         #view-admin { background: rgba(20,20,20,0.98); padding: 30px; border: 1px solid var(--gold); border-radius: 15px; }
@@ -143,7 +182,7 @@
     const ADMIN_PASS = "canon_-!LB2107";
     let clicks = 0;
 
-    // 1. Header Logic
+    // Header Logic
     let lastScroll = 0;
     const header = document.getElementById("main-header");
     window.addEventListener("scroll", () => {
@@ -157,7 +196,7 @@
         lastScroll = currentScroll;
     });
 
-    // 2. Load and Render
+    // Load Data
     async function loadData() {
         try {
             const res = await fetch('affiliate.json');
@@ -181,7 +220,7 @@
         `).join('');
     }
 
-    // 3. Search Logic
+    // Search Logic
     function filterProducts() {
         const term = document.getElementById('search-input').value.toLowerCase();
         const filtered = allProducts.filter(p => 
@@ -191,12 +230,13 @@
         renderShop(filtered);
     }
 
-    // 4. Admin Secret
+    // Admin Secret (3 clicks on Logo)
     document.getElementById('admin-trigger').addEventListener('click', () => {
         clicks++;
         setTimeout(() => clicks = 0, 1000);
         if(clicks === 3) {
-            if(prompt("Admin Pass:") === ADMIN_PASS) {
+            let pass = prompt("Admin Pass:");
+            if(pass === ADMIN_PASS) {
                 document.getElementById('view-shop').style.display = 'none';
                 document.getElementById('view-admin').classList.add('active-view');
                 renderAdmin();
